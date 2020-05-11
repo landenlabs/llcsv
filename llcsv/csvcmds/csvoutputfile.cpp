@@ -41,7 +41,7 @@
 
 
 bool CsvOutputFile::init(CsvCmds& csvCmds, CsvError& csvError) {
-
+    CsvOutput::init(csvCmds, csvError);
     if (args.size() == 1) {
         out.open(args[0], std::ofstream::out);
         if (out.fail()) {
@@ -55,15 +55,11 @@ bool CsvOutputFile::init(CsvCmds& csvCmds, CsvError& csvError) {
     return out.is_open();
 }
 
-bool CsvOutputFile::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) {
-    bool sep = false;
-    const CsvTool::CsvRow& row = inputs.rowData[inputs.fileIdx].csvRow;
-    
-    for (auto &col : row) {
-        if (sep) out << ",";
-        out << col;
-        sep = true;
-    }
-    out << outEOL;
-    return !out.fail();
+std::ostream& CsvOutputFile::getOut() {
+    return out;
+}
+
+// TODO - remove this method
+bool CsvOutputFile::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
+    return CsvOutput::writeRow(csvCmds, inputs);
 }

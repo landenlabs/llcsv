@@ -34,18 +34,20 @@
 
 #pragma once
 
-#include "csvmodify.h"
+#include "csvselectcolumns.h"
+#include "csvinputpipe.h"
 
 class CsvCmds;
 class CsvErrors;
 
-class CsvAppendColumns : public CsvModify {
-    
+class CsvAppendColumns : public CsvSelectColunns {
+     
     bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
-    bool modify(CsvCmds& csvCmds,  CsvInputs& inputFiles) const override;
-    
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
+    bool appendColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells);
+
 public:
     std::string getName() const  override { return "AppendColumns"; }
-    CsvAppendColumns(Order_t order) : CsvModify(order) {
+    CsvAppendColumns(Order_t order) : CsvSelectColunns(order) {
     }
 };

@@ -36,7 +36,7 @@
 #include "csvcmds.h"
 #include "csvmodify.h"
 #include "csvselect.h"
-#include "csvinputs.h"
+#include "csvinputpipe.h"
 #include "csvoutput.h"
 #include "csvtool.h"
 using namespace CsvTool;
@@ -52,19 +52,15 @@ int CsvCmds::init(CsvError& csvError) {
     
     typedef std::shared_ptr<CsvInputs> CsvIn;
     std::vector<CsvIn> inCmds;
-    std::vector<CsvIn>::iterator inIter;
+    // std::vector<CsvIn>::iterator inIter;
     
-    typedef std::shared_ptr<CsvSelect> CsvSel;
-    std::vector<CsvSel> selectCmds;
-    std::vector<CsvSel>::iterator selIter;
-    
-    typedef std::shared_ptr<CsvModify> CsvMod;
-    std::vector<CsvMod> modifyCmds;
-    std::vector<CsvMod>::iterator modIter;
+    typedef std::shared_ptr<CsvAction> CsvAct;
+    std::vector<CsvAct> actionCmds;
+    std::vector<CsvAct>::iterator actIter;
     
     typedef std::shared_ptr<CsvOutput> CsvOut;
     std::vector<CsvOut> outCmds;
-    std::vector<CsvOut>::iterator outIter;
+    // std::vector<CsvOut>::iterator outIter;
     
     std::vector<CsvItem>::iterator iter = begin();
     while (iter != end()) {
@@ -72,15 +68,13 @@ int CsvCmds::init(CsvError& csvError) {
         if (!item->init(*this, csvError)) {
             return -1;
         }
-        switch (item->action) {
+        switch (item->actionType) {
             case CsvCmd::IN:
                 inCmds.push_back(std::dynamic_pointer_cast<CsvInputs>(item));
                 break;
             case CsvCmd::MODIFY:
-                modifyCmds.push_back(std::dynamic_pointer_cast<CsvModify>(item));
-                break;
             case CsvCmd::SELECT:
-                selectCmds.push_back(std::dynamic_pointer_cast<CsvSelect>(item));
+                actionCmds.push_back(std::dynamic_pointer_cast<CsvAction>(item));
                 break;
             case CsvCmd::OUT:
                 outCmds.push_back(std::dynamic_pointer_cast<CsvOutput>(item));
@@ -105,31 +99,30 @@ int CsvCmds::init(CsvError& csvError) {
             bool endInput = false;
             while (!endInput && inputs.nextRow()) {
                 bool rowValid = true;
-                selIter = selectCmds.begin();
-                while (rowValid && selIter != selectCmds.end()) {
-                    CsvSelect& selItem = *(*selIter++);
-                    if (selItem.order > inOrder && selItem.order < endOrder) {
-                        rowValid = selItem.selected(*this, inputs);
+                CsvInputs* pipe = &inputs;
+                actIter = actionCmds.begin();
+                while (rowValid && actIter != actionCmds.end()) {
+                    CsvAction& actItem = *(*actIter++);
+                    if (actItem.order > inOrder && actItem.order < endOrder) {
+                        try {
+                            rowValid = actItem.action(*this, *pipe, pipe);
+                        } catch (std::exception ex) {
+                            std::cerr << actItem.getName() << " " << ex.what() << std::endl;
+                        }
                     }
                 }
                 
                 if (rowValid) {
-                    bool modValid = true;
-                    modIter = modifyCmds.begin();
-                    while (modValid && modIter != modifyCmds.end()) {
-                        modValid =(*modIter++)->modify(*this, inputs);
-                    }
-                    
                     for (unsigned outIdx=0; outIdx < outCmds.size(); outIdx++) {
                         CsvOutput& output = *outCmds[outIdx];
-                        output.writeRow(*this, inputs);
+                        output.writeRow(*this, *pipe);
                     }
                 }
                 
-                for (selIter = selectCmds.begin();
-                     !endInput && selIter != selectCmds.end();
-                     selIter++) {
-                    endInput =(*selIter)->end(*this, inputs);
+                for (actIter = actionCmds.begin();
+                     !endInput && actIter != actionCmds.end();
+                     actIter++) {
+                    endInput =(*actIter)->end(*this, *pipe, pipe);
                 }
             }
         }
@@ -138,7 +131,7 @@ int CsvCmds::init(CsvError& csvError) {
 }
 
 bool CsvCmds::setParallel(bool parallel, Order_t order) {
-    CsvInputs* pInputs = findCmd<CsvInputs>(CsvCmd::Action::IN, FindFilter(order));
+    CsvInputs* pInputs = findCmd<CsvInputs>(CsvCmd::ActionType::IN, FindFilter(order));
 
     if (pInputs != NULL) {
         pInputs->setParallel(parallel, order);

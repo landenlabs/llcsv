@@ -35,16 +35,23 @@
 #pragma once
 
 #include "csvmodify.h"
+#include "csvselectcolumns.h"
 
-
-class CsvJoinColumns : public CsvModify {
-    
+// key to join on
+// how to match key, match or contains
+// key sorted
+// if no match what to do
+// keys:[Date],[Ordered],[dt]  // 3 files which columns are keys
+// keys:(1,[Date]),(2,[Ordered]),(4,[dt])
+// match:all or any
+// sorted
+class CsvJoinColumns : public CsvSelectColunns {
     bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
-    
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
+    bool appendColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells);
+
 public:
     std::string getName() const override { return "JoinColumns"; }
-    CsvJoinColumns(Order_t order) : CsvModify(order) {
-    }
-    
-    bool modify(CsvCmds& csvCmds, CsvInputs& inputFiles) const override;
+    CsvJoinColumns(Order_t order);
+
 };

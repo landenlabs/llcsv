@@ -85,5 +85,5 @@ public:
         argRE = std::regex(argREstr, std::regex::extended);
     }
     
-    bool modify(CsvCmds& csvCmds,  CsvInputs& inputFiles) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
 };

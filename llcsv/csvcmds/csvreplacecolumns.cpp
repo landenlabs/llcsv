@@ -48,9 +48,9 @@ bool CsvReplaceColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
 
     for (unsigned idx = 0; idx < args.size(); idx++) {
         const std::string& aa = args[idx];
-        if (std::regex_match(aa.begin(), aa.end(), match, rx)) {
+        if (std::regex_match(aa, match, rx)) {
             // const std::string& bigName = match[1];
-            size_t mlen = match.size();
+            // size_t mlen = match.size();
             const std::string& colname = match[1];
             const std::string& fromPatStr = match[2];
             const std::string& toPat = match[3];
@@ -67,7 +67,7 @@ bool CsvReplaceColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
     return true;
 }
 
-bool CsvReplaceColumns::modify(CsvCmds& csvCmds, CsvInputs& inputs) const  {
+bool CsvReplaceColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe)   {
     CsvRowData& rowData = inputs.getRowData();
     ReplaceFields::const_iterator iter;
     

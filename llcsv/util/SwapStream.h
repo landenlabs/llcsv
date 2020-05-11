@@ -1,19 +1,19 @@
 //-------------------------------------------------------------------------------------------------
 //
-//  SwapStream.cpp      5/8/2015        DALang
+//  SwapStream.cpp      5/8/2020        DALang
 //
 //  Swap iostream, example cout with a file.
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2015
+// Author: Dennis Lang - 2020
 // http://landenlabs.com
 //
-// This file is part of JavaTree project.
+// This file is part of llcsv project.
 //
 // ----- License ----
 //
-// Copyright (c) 2015 Dennis Lang
+// Copyright (c) 2020 Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal

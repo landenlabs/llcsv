@@ -71,12 +71,12 @@ public:
     void dump(std::ostream& out);
     
     template <class TT>
-    TT* findCmd(const CsvCmd::Action& action, const FindFilter& filter) {
+    TT* findCmd(const CsvCmd::ActionType& action, const FindFilter& filter) {
         iterator iter = begin();
         TT* result = nullptr;
         while (iter != end()) {
-            if ((*iter)->action == action && filter.best((*iter)->order)) {
-                result = (TT*)(*iter).get();
+            if ((*iter)->actionType == action && filter.best((*iter)->order)) {
+                result = dynamic_cast<TT*>((*iter).get());
                 if (filter.first()) {
                     break;
                 }

@@ -4,14 +4,14 @@
 //
 //-------------------------------------------------------------------------------------------------
 //
-// Author: Dennis Lang - 2015
+// Author: Dennis Lang - 2020
 // http://landenlabs.com
 //
-// This file is part of JavaTree project.
+// This file is part of llcsv project.
 //
 // ----- License ----
 //
-// Copyright (c) 2015 Dennis Lang
+// Copyright (c) 2020 Dennis Lang
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -191,8 +191,9 @@ Directory_files::Directory_files(const lstring& dirName)
 {
     realpath(dirName.c_str(), my_fullname);
     my_baseDir = my_fullname;
+    errno = 0;
     my_pDir = opendir(my_baseDir);
-    my_is_more = (my_pDir != NULL);
+    my_is_more = (my_pDir != NULL && errno == 0);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -34,10 +34,14 @@
 
 #pragma once
 
+#include <vector>
+
 #include "csvinputs.h"
 #include "csvtool.h"
 #include "csvrowdata.h"
+#include "fileutils.h"
 
+typedef FileUtils<size_t> FileUtils_t;
 
 // TODO - make parallel (horz) and vertical input cmds.
 class CsvInputFiles : public CsvInputs {
@@ -50,18 +54,17 @@ class CsvInputFiles : public CsvInputs {
     
     CsvTool::CsvParser csvParser;
     std::string field;
+    size_t nextArgIdx;
     
 public:
-    CsvTool::CsvStream inFS;
+    std::vector<CsvTool::CsvStream> inFsList;
     size_t nextFileIdx;
-
-    std::string file;
-    
+    FileUtils_t fileUtils;
     
 public:
-    CsvInputFiles(Order_t order) : CsvInputs(order) {
-    }
+    CsvInputFiles(Order_t order);
     
+    bool getNextFileName();
     bool nextFile(CsvError& csvError) override;
     bool nextRow() override;
 };

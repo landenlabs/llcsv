@@ -37,14 +37,26 @@
 #include "csvcmds.h"
 #include "csvtool.h"
 using namespace CsvTool;
+#include "fileutils.h"
 
 bool static USE_BIG_STACK_BUFFER = false;
 bool static USE_BIG_HEAP_BUFFER = false;
 static bool USE_CR_EOL  = false;
 static bool USE_KEEP_QUTOES = false;
 
+
+size_t onFile(const std::string& fullname, FileUtils_t& fileUtils) {
+    fileUtils.fileDirList.push(fullname);
+    return fileUtils.fileDirList.size();
+}
+
+CsvInputFiles::CsvInputFiles(Order_t order) :
+    CsvInputs(order),  fileUtils(&onFile, this)
+{
+}
+
 bool CsvInputFiles::init(CsvCmds& csvCmds, CsvError& csvError) {
-    nextFileIdx = fileIdx = 0;
+    nextArgIdx = nextFileIdx = fileIdx = 0;
     
     // Parse and count rows
     if ( USE_CR_EOL) {
@@ -54,16 +66,52 @@ bool CsvInputFiles::init(CsvCmds& csvCmds, CsvError& csvError) {
         csvParser.keepQuotes = true;
     }
     
-    return fileIdx < args.size();
+    ArgList::iterator iter = args.begin();
+    while (iter != args.end()) {
+        const std::string& arg = *iter;
+        if (arg[0] == '-' || arg[0] == '#') {
+            if (strcasecmp("header", arg.c_str()+1) == 0) {
+                hasHeader = true;
+            }
+            args.erase(iter);
+        } else {
+            iter++;
+        }
+    }
+    return args.size() > 0 ? true : csvError.setFalse("InputFile - missing filename");
 }
 
-bool CsvInputFiles::nextFile(CsvError& csvError) {
-    inFS.close();
-    
-    if (nextFileIdx < args.size()) {
+bool CsvInputFiles::getNextFileName()  {
+    // TODO - iterate on FileUtil to get filenames
+    if (nextArgIdx < args.size()) {
+        file = args[nextArgIdx++];
+        fileUtils.ScanFiles(file);   // TODO - use thread
+    }
+    if (fileUtils.fileDirList.empty()) {
+        return false;
+    } else {
+        file = fileUtils.fileDirList.front();
+        fileUtils.fileDirList.pop();
         fileIdx = nextFileIdx;
-        file = args[nextFileIdx++];
-        inFS.open(file, std::ifstream::binary);
+        if (parallel)
+           nextFileIdx++;
+        return true;
+    }
+}
+    
+bool CsvInputFiles::nextFile(CsvError& csvError) {
+    if (!parallel && fileIdx < inFsList.size()) {
+        CsvTool::CsvStream& inFS = inFsList[fileIdx];
+        inFS.close();
+    }
+    
+    bool okay = (parallel && inFsList.size() > fileIdx+1);
+    if (okay) {
+        fileIdx++;  // TODO - update filename
+    } else if (getNextFileName()) {
+        inFsList.resize(fileIdx+1); // TODO - combine rowData and inFS
+        CsvTool::CsvStream& inFS = inFsList[fileIdx];
+        inFS.open(file, std::ifstream::binary); // TODO - hande "-" for stdin
         if (!inFS.fail()) {
             // Optional input buffering hacks
             if( USE_BIG_STACK_BUFFER){
@@ -75,15 +123,35 @@ bool CsvInputFiles::nextFile(CsvError& csvError) {
                 std::vector<char> bigBuffer(BUFFER_SIZE);
                 inFS.rdbuf()->pubsetbuf(&bigBuffer[0], BUFFER_SIZE);
             }
-            rowData.resize(nextFileIdx);
+            
+            rowData.resize(fileIdx+1);  // TODO - combine rowData and inFS
+            
+            if (hasHeader) {
+                if (csvParser.getRow(inFS, field, rowData[fileIdx].csvRow)) {
+                    rowData[fileIdx].csvRow.setHeaders();
+                }
+            }
+            std::cerr << "InputFile open " << file << std::endl;
+        } else {
+            csvError.append("InputFile - Failed to open ")
+                .append(file)
+                .append(" ").append(strerror(errno));
         }
+        okay = inFS.is_open();
     }
-    
-    return inFS.is_open();
+    return okay;
 }
 
 bool CsvInputFiles::nextRow() {
-    bool okay = csvParser.getRow(inFS, field, rowData[fileIdx].csvRow);
-    if (okay) rowData[fileIdx].inRowCount++;
+    bool okay;
+    do {
+        CsvTool::CsvStream& inFS = inFsList[fileIdx];
+        rowData[fileIdx].csvRow.clear();
+        okay = csvParser.getRow(inFS, field, rowData[fileIdx].csvRow);
+        if (okay)
+            rowData[fileIdx].inRowCount++;
+    } while (parallel && nextFile(CsvCmds::CSV_ERROR));
+    if (parallel)
+        fileIdx = 0;
     return okay;
 }

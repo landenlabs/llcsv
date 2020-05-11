@@ -47,23 +47,25 @@ using namespace CsvTool;
 bool CsvGenerateColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
     pCsvCmds = &csvCmds;
     nextFileIdx = fileIdx = 0;
+    /*
     pSelRows = csvCmds.findCmd<CsvSelectRows>(typeid(CsvSelectRows), FindFilter(order));
     if (pSelRows == nullptr) {
-        // csvError.append("Must proceed Generate with RowSelect to define maximum rows");
+        csvError.append("Must proceed Generate with RowSelect to define maximum rows");
     }
+    */
     
     numFiles = 1;
     fileFields.resize(numFiles);
     std::vector<std::shared_ptr<GenFields>>* pFields = &fileFields.back();
     GenSpecs genSpec(4);
     
-    const char* rxStr = "(#[^,]+|([0-9+]+|\\[[^]]+]):([0-9.]+)([dsfrx])(\\([^,]+(,[^,]+)*\\)))";
+    const char* rxStr = "([#-][^,]+|([0-9+]+|\\[[^]]+]):([0-9.]*)([dsfnrx])(\\([^,]+(,[^,]+)*\\)))";
     std::regex rx = std::regex(rxStr, std::regex::extended);
     std::smatch match;
     
     for (unsigned idx = 0; idx < args.size(); idx++) {
         const std::string& aa = args[idx];
-        if (std::regex_match(aa.begin(), aa.end(), match, rx)) {
+        if (std::regex_match(aa, match, rx)) {
             // const std::string& bigName = match[1];
             size_t mlen = match.size();
             if (mlen > 6 && match[5].length() > 0) {
@@ -89,9 +91,11 @@ bool CsvGenerateColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
                     case 'r':   // row - TODO - remove this
                         pFields->push_back(std::make_shared<GenRowField>(genSpec));
                         break;
+                    case 'n':   // input name
+                        break;
                 }
             } else {
-                // nextfile
+                // #nextfile or -nextflie
                 numFiles++;
                 fileFields.resize(numFiles);
                 pFields = &fileFields.back();

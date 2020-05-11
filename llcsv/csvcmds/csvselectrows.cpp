@@ -41,7 +41,8 @@ bool operator<(const RowRange& lhs, const RowRange& rhs)  {
     return lhs.from < rhs.from;
 }
 
-CsvSelectRows::CsvSelectRows(Order_t order, const char* defArg) : CsvSelect(order) {
+CsvSelectRows::CsvSelectRows(Order_t order, const char* defArg) : CsvSelect(order)
+{
     if (defArg != nullptr) {
         addArgs(defArg, CsvCmds::CSV_ERROR);
     }
@@ -84,7 +85,7 @@ bool CsvSelectRows::init(CsvCmds& csvCmds, CsvError& csvError) {
 }
 
 // TODO - support #nextFile to have multiple row selection sets.
-bool CsvSelectRows::selected(CsvCmds& csvCmds, const CsvInputs& inputs) const {
+bool CsvSelectRows::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe)  {
     size_t rowNum = inputs.getRowNum();
     
     // TODO - init iter and only advance as needed. 
@@ -99,6 +100,6 @@ bool CsvSelectRows::selected(CsvCmds& csvCmds, const CsvInputs& inputs) const {
 }
  
 
-bool CsvSelectRows::end(CsvCmds& csvCmds, const CsvInputs& inputs) const {
+bool CsvSelectRows::end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const {
     return  inputs.getRowNum() > maxRow;
 }

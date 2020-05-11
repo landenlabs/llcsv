@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B93E1B62245534F400A849A1 /* csvoutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B93E1B61245534F400A849A1 /* csvoutput.cpp */; };
+		B93E1B672457AE2400A849A1 /* fileutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B93E1B652457AE2400A849A1 /* fileutils.cpp */; };
 		B99A5A94244BE7080014A541 /* csvreplacecolumns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B99A5A8D244BE7080014A541 /* csvreplacecolumns.cpp */; };
 		B99A5A95244BE7080014A541 /* csvappendrows.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B99A5A8E244BE7080014A541 /* csvappendrows.cpp */; };
 		B99A5A96244BE7080014A541 /* csvcmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B99A5A8F244BE7080014A541 /* csvcmds.cpp */; };
@@ -24,6 +25,9 @@
 		B9D3754D244B89D6009CEE5F /* csvselectcolumns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D3754C244B89D6009CEE5F /* csvselectcolumns.cpp */; };
 		B9D3754F244B89F7009CEE5F /* csvselectrows.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D3754E244B89F7009CEE5F /* csvselectrows.cpp */; };
 		B9D37551244B8B46009CEE5F /* csvjoincolumns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D37550244B8B46009CEE5F /* csvjoincolumns.cpp */; };
+		B9D4D26D245D1BF200364935 /* csvadjustcolumns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D4D26C245D1BF200364935 /* csvadjustcolumns.cpp */; };
+		B9D4D273245EFF7B00364935 /* csvinputpipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D4D270245EFF7B00364935 /* csvinputpipe.cpp */; };
+		B9D4D2772461943300364935 /* csvformatcolumns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9D4D2762461943300364935 /* csvformatcolumns.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +46,8 @@
 		B93E1B61245534F400A849A1 /* csvoutput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = csvoutput.cpp; sourceTree = "<group>"; };
 		B93E1B632455D7A400A849A1 /* strutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strutils.h; sourceTree = "<group>"; };
 		B93E1B642455E13000A849A1 /* matfields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matfields.h; sourceTree = "<group>"; };
+		B93E1B652457AE2400A849A1 /* fileutils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fileutils.cpp; sourceTree = "<group>"; };
+		B93E1B662457AE2400A849A1 /* fileutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileutils.h; sourceTree = "<group>"; };
 		B99A5A8D244BE7080014A541 /* csvreplacecolumns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvreplacecolumns.cpp; sourceTree = "<group>"; };
 		B99A5A8E244BE7080014A541 /* csvappendrows.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvappendrows.cpp; sourceTree = "<group>"; };
 		B99A5A8F244BE7080014A541 /* csvcmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvcmds.cpp; sourceTree = "<group>"; };
@@ -90,6 +96,16 @@
 		B9D3754C244B89D6009CEE5F /* csvselectcolumns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = csvselectcolumns.cpp; sourceTree = "<group>"; };
 		B9D3754E244B89F7009CEE5F /* csvselectrows.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = csvselectrows.cpp; sourceTree = "<group>"; };
 		B9D37550244B8B46009CEE5F /* csvjoincolumns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = csvjoincolumns.cpp; sourceTree = "<group>"; };
+		B9D4D26B245D1BF200364935 /* csvadjustcolumns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csvadjustcolumns.h; sourceTree = "<group>"; };
+		B9D4D26C245D1BF200364935 /* csvadjustcolumns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvadjustcolumns.cpp; sourceTree = "<group>"; };
+		B9D4D26E245DC25300364935 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		B9D4D26F245DE40600364935 /* range.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = range.h; sourceTree = "<group>"; };
+		B9D4D270245EFF7B00364935 /* csvinputpipe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvinputpipe.cpp; sourceTree = "<group>"; };
+		B9D4D271245EFF7B00364935 /* csvtool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csvtool.h; sourceTree = "<group>"; };
+		B9D4D272245EFF7B00364935 /* csvinputpipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csvinputpipe.h; sourceTree = "<group>"; };
+		B9D4D274245F129F00364935 /* csvaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = csvaction.h; sourceTree = "<group>"; };
+		B9D4D2752461943300364935 /* csvformatcolumns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csvformatcolumns.h; sourceTree = "<group>"; };
+		B9D4D2762461943300364935 /* csvformatcolumns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csvformatcolumns.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +149,9 @@
 		B9D374E0244B6835009CEE5F /* csvcmds */ = {
 			isa = PBXGroup;
 			children = (
+				B9D4D274245F129F00364935 /* csvaction.h */,
+				B9D4D26C245D1BF200364935 /* csvadjustcolumns.cpp */,
+				B9D4D26B245D1BF200364935 /* csvadjustcolumns.h */,
 				B99A5A93244BE7080014A541 /* csvappendcolumns.cpp */,
 				B9D3753B244B8707009CEE5F /* csvappendcolumns.h */,
 				B99A5A8E244BE7080014A541 /* csvappendrows.cpp */,
@@ -142,22 +161,26 @@
 				B9D3753A244B8707009CEE5F /* csvcmds.h */,
 				B9D37539244B8706009CEE5F /* csverror.h */,
 				B9D37541244B8707009CEE5F /* csvfiles.h */,
+				B9D4D2762461943300364935 /* csvformatcolumns.cpp */,
+				B9D4D2752461943300364935 /* csvformatcolumns.h */,
 				B99A5A9F244C99B50014A541 /* csvgeneratecolumns.cpp */,
 				B99A5A9E244C99550014A541 /* csvgeneratecolumns.h */,
 				B99A5A92244BE7080014A541 /* csvinputfiles.cpp */,
 				B9D37542244B8707009CEE5F /* csvinputfiles.h */,
+				B9D4D270245EFF7B00364935 /* csvinputpipe.cpp */,
+				B9D4D272245EFF7B00364935 /* csvinputpipe.h */,
 				B99A5AA5244D0D860014A541 /* csvinputs.h */,
 				B9D37550244B8B46009CEE5F /* csvjoincolumns.cpp */,
 				B9D37546244B8707009CEE5F /* csvjoincolumns.h */,
 				B9D37547244B8975009CEE5F /* csvmatchcolumns.cpp */,
 				B9D37540244B8707009CEE5F /* csvmatchcolumns.h */,
 				B99A5A9D244C84330014A541 /* csvmodify.h */,
-				B99A5AA6244D221E0014A541 /* csvoutput.h */,
 				B93E1B61245534F400A849A1 /* csvoutput.cpp */,
+				B99A5AA6244D221E0014A541 /* csvoutput.h */,
 				B99A5A90244BE7080014A541 /* csvoutputfile.cpp */,
 				B9D37544244B8707009CEE5F /* csvoutputfile.h */,
-				B99A5AA7244D22400014A541 /* csvoutputtable.h */,
 				B99A5AA8244D24120014A541 /* csvoutputtable.cpp */,
+				B99A5AA7244D22400014A541 /* csvoutputtable.h */,
 				B99A5A8D244BE7080014A541 /* csvreplacecolumns.cpp */,
 				B9D37545244B8707009CEE5F /* csvreplacecolumns.h */,
 				B99A5AA1244C9BBB0014A541 /* csvrowdata.h */,
@@ -168,6 +191,7 @@
 				B9D37543244B8707009CEE5F /* csvselectrows.h */,
 				B99A5A91244BE7080014A541 /* csvsortrowsbycolumnkeys.cpp */,
 				B9D3753E244B8707009CEE5F /* csvsortrowsbycolumnkeys.h */,
+				B9D4D271245EFF7B00364935 /* csvtool.h */,
 				B99A5AA4244D09040014A541 /* genfields.h */,
 				B93E1B642455E13000A849A1 /* matfields.h */,
 			);
@@ -188,6 +212,10 @@
 				B9D37522244B7D22009CEE5F /* SwapStream.h */,
 				B9D37521244B7D10009CEE5F /* catch.hpp */,
 				B93E1B632455D7A400A849A1 /* strutils.h */,
+				B93E1B652457AE2400A849A1 /* fileutils.cpp */,
+				B93E1B662457AE2400A849A1 /* fileutils.h */,
+				B9D4D26E245DC25300364935 /* utils.h */,
+				B9D4D26F245DE40600364935 /* range.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -252,12 +280,16 @@
 				B99A5A94244BE7080014A541 /* csvreplacecolumns.cpp in Sources */,
 				B93E1B62245534F400A849A1 /* csvoutput.cpp in Sources */,
 				B99A5A97244BE7080014A541 /* csvoutputfile.cpp in Sources */,
+				B93E1B672457AE2400A849A1 /* fileutils.cpp in Sources */,
 				B99A5A98244BE7080014A541 /* csvsortrowsbycolumnkeys.cpp in Sources */,
 				B99A5AA0244C99B50014A541 /* csvgeneratecolumns.cpp in Sources */,
+				B9D4D26D245D1BF200364935 /* csvadjustcolumns.cpp in Sources */,
 				B99A5A95244BE7080014A541 /* csvappendrows.cpp in Sources */,
 				B9D37551244B8B46009CEE5F /* csvjoincolumns.cpp in Sources */,
+				B9D4D2772461943300364935 /* csvformatcolumns.cpp in Sources */,
 				B99A5A96244BE7080014A541 /* csvcmds.cpp in Sources */,
 				B99A5AA3244C9C430014A541 /* suputils.cpp in Sources */,
+				B9D4D273245EFF7B00364935 /* csvinputpipe.cpp in Sources */,
 				B99A5AA9244D24120014A541 /* csvoutputtable.cpp in Sources */,
 				B9D3754D244B89D6009CEE5F /* csvselectcolumns.cpp in Sources */,
 				B9B44DD81D8F661700782398 /* llcsv.cpp in Sources */,

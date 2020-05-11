@@ -35,29 +35,11 @@
 #pragma once
 
 #include "csvselect.h"
+#include "range.h"
 #include "csvtool.h"
 #include <set>
 
-template<typename TT>
-struct Range {
 
-    TT from;
-    TT to;
-    
-    bool contains(TT item) const {
-        return from <= item && item <= to;
-    }
-    bool above(TT item) const {
-        return item < from;    // range is above item
-    }
-    bool below(TT item) const {
-        return item > to;    // range is below item
-    }
-    Range(TT _from, TT _to = 0) {
-        from = _from;
-        to = std::max(_from, _to);
-    }
-};
 typedef Range<size_t> RowRange;
 
 class CsvSelectRows : public CsvSelect {
@@ -74,6 +56,6 @@ public:
     std::string getName() const  override { return "SelectRows"; }
     CsvSelectRows(Order_t order, const char* defArg = nullptr);
     
-    bool selected(CsvCmds& csvCmds, const CsvInputs& inputFiles) const override;
-    bool end(CsvCmds& csvCmds, const CsvInputs& inputFiles) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe)  override;
+    bool end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const override;
 };

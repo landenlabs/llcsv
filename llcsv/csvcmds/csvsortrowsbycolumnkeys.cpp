@@ -40,6 +40,6 @@ bool CsvSortRowsByColumnKeys::init(CsvCmds& csvCmds, CsvError& cscvError) {
     return true;
 }
 
-bool CsvSortRowsByColumnKeys::modify(CsvCmds& csvCmds,  CsvInputs& inputs) const {
+bool CsvSortRowsByColumnKeys::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe) {
     return true;
 }

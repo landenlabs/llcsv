@@ -47,15 +47,16 @@ class CsvMatchColumns : public CsvSelect {
     
 public:
     std::string getName() const  override { return "MatchColumns" ;}
-    CsvMatchColumns(Order_t order) : CsvSelect(order) {
+    CsvMatchColumns(Order_t order) : CsvSelect(order)
+    {
         // 2~"text"i, 2=/regex/, [hello]ge[1.0]f
         // i=ignorecase, f=float, d=decimal, x=hexDecimal
         argREstr = "([0-9]+|\\[[^]]+])([=<>!~]|eq|ne|gt|ge|lt|le)([0-9.-]+|['\"/].*['\"/])[ifdx]*";
         argRE = std::regex(argREstr, std::regex::extended);
     }
     
-    bool selected(CsvCmds& csvCmds, const CsvInputs& inputs) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
     
     // Past end of selection range
-    bool end(CsvCmds& csvCmds, const CsvInputs& inputs) const override;
+    bool end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const override;
 };

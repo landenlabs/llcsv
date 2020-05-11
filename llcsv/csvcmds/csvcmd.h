@@ -36,7 +36,7 @@
 #pragma once
 
 #include "csverror.h"
-
+#include <iostream>
 #include <regex>
 
 // Forward
@@ -46,13 +46,14 @@ const Order_t MAX_ORDER = -1;
 
 class CsvCmd {  // make abstract
 public:
-    std::vector<std::string> args;
+    typedef  std::vector<std::string>  ArgList;
+    ArgList args;
     std::regex argRE;
     std::smatch match;
     std::string argREstr;
     
-    enum Action { NONE, IN, SELECT, MODIFY, OUT };
-    Action action = NONE;
+    enum ActionType { NONE, IN, SELECT, MODIFY, OUT };
+    ActionType actionType = NONE;
     Order_t order = 0;
     
 protected:
@@ -66,12 +67,14 @@ protected:
     
 public:
     bool addArgs(const std::string& arg, CsvError& error) {
-        if (std::regex_match(arg.begin(), arg.end(), match, argRE)) {
+        if (std::regex_match(arg, match, argRE)) {
             if (match.length() == arg.length()) {
                 args.push_back(arg);
                 return true;
+            } else {
+                // TODO - show partial match.
+                // std::cerr << "unknown arg " << arg << std::endl;
             }
-            // TODO - show partial match.
         }
         error.msg = "Invalid arguments";
         error.arg = arg;

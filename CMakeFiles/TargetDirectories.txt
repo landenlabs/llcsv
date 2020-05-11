@@ -1,0 +1,3 @@
+/Users/ldennis/projects/projects-xcode/llcsv/CMakeFiles/rebuild_cache.dir
+/Users/ldennis/projects/projects-xcode/llcsv/CMakeFiles/edit_cache.dir
+/Users/ldennis/projects/projects-xcode/llcsv/CMakeFiles/llcsv.dir

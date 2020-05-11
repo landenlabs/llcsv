@@ -46,5 +46,5 @@ public:
     CsvSortRowsByColumnKeys(Order_t order) : CsvModify(order) {
     }
     
-    bool modify(CsvCmds& csvCmds,  CsvInputs& inputs) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
 };

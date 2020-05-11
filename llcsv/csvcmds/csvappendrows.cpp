@@ -39,6 +39,6 @@ bool CsvAppendRows::init(CsvCmds& csvCmds, CsvError& cscvError) {
     return true;
 }
 
-bool CsvAppendRows::modify(CsvCmds& csvCmds,  CsvInputs& inputFiles) const {
+bool CsvAppendRows::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) {
     return true;
 }

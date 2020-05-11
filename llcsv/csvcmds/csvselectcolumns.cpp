@@ -35,16 +35,134 @@
 
 #include "csvselectcolumns.h"
 #include "csvcmds.h"
+#include "strutils.h"
 
-bool CsvSelectColunns::init(CsvCmds& csvCmds, CsvError& cscvError) {
+CsvSelectColunns::CsvSelectColunns(Order_t order) : CsvSelect(order), outPipe(0) {
+}
+
+bool CsvSelectColunns::init(CsvCmds& csvCmds, CsvError& csvError) {
+    // 1,2-,-3,[hello],[a]-[b]
+    //  argREstr = "(([0-9+]+|\\[[^]]+])[,-]{0,1})+";
+    minCol = -1;
+    maxCol = 0;
+    
+    ArgList::iterator iter = args.begin();
+    while (iter != args.end()) {
+        bool validDigit = false;
+        char* nptr = (char*)(*iter).c_str();
+        while (isdigit(*nptr)) {
+            ColIdx_t low = strtoul(nptr, &nptr, 10) -1;   // make zero based
+            ColIdx_t high = low;
+            if (*nptr == '-') {
+                if (nptr[1] == '\0') {
+                    high = -1;
+                } else {
+                    high = strtoul(nptr+1, &nptr, 10) -1;   // make zero based
+                    high = std::max(low, high);
+                }
+            }
+            if (*nptr == ',') {
+                nptr++;
+            }
+            
+            ColRange colRange(low, high);
+            colRanges.push_back(colRange);
+            minCol = std::min(minCol, low);
+            maxCol = std::max(maxCol, high);
+            validDigit = true;
+        }
+       
+        if (validDigit)
+            args.erase(iter);
+        else
+            iter++;
+    }
+    
+    outPipe.init(csvCmds, csvError);
     return true;
 }
 
-bool CsvSelectColunns::selected(CsvCmds& csvCmds, const CsvInputs& inputFiles) const {
+static std::regex skipPat("^-");
+
+// [colname] or [-skipname]
+bool CsvSelectColunns::initNames(CsvCmds& csvCmds) {
+    bool okay = true;
+    std::string missing;
+    if (args.size() > 0) {
+        okay = false;
+        // CsvInputs* pInputs = csvCmds.findCmd<CsvInputs>(CsvCmd::ActionType::IN, FindFilter(order));
+        if (pRowData != nullptr) {
+            ColIdx_t colNum = -1;
+            do {
+            ArgList::iterator iter = args.begin();
+            while (iter != args.end()) {
+               std::string colName(*iter);
+                remove(colName, "[]");  // TODO - support partial match
+                bool skip = remove(colName, skipPat);
+                colNum = indexOf(pRowData->csvRow.getHeaders(), colName, colNum+1);
+               if (colNum != NPOS || skip) {
+                   // do {
+                       okay = true;
+                       ColRange colRange(colNum);
+                       colRanges.push_back(colRange);
+                       minCol = std::min(minCol, colNum);
+                       maxCol = std::max(maxCol, colNum);
+                   // } while ((colNum = indexOf(pRowData->csvRow.getHeaders(), colName, colNum+1)) != NPOS);
+               } else {
+                   missing += *iter + " ";
+                   break;
+               }
+                iter++;
+           }
+            } while (colNum != NPOS);
+       }
+        args.clear();
+    }
+    
+    okay |= colRanges.size() > 0;
+    if (!okay) {
+        if (missing.empty()) {
+            CsvCmds::CSV_ERROR.append(getName() + " No valid column selection defined");
+        } else {
+            CsvCmds::CSV_ERROR.append(getName() + " Failed to find columns:" + missing);
+        }
+    }
+    return okay;
+}
+    
+bool CsvSelectColunns::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe)  {
+  
+    bool okay = true;
+    const CsvRowData* pNextRowData = &inputs.getRowData();
+    if (pNextRowData != pRowData) {
+        pRowData = pNextRowData;
+        okay = initNames(csvCmds);
+        outPipe.nextFile(CsvCmds::CSV_ERROR);
+        copySelectColumns(outPipe.getRowData().csvRow.getHeaders(), pRowData->csvRow.getHeaders());
+    }
+    copySelectColumns(outPipe.getRowData().csvRow, pRowData->csvRow);
+    outPipe.setRowNum(inputs.getRowNum());
+    pipe = &outPipe;
+    return okay;
+}
+
+bool CsvSelectColunns::copySelectColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells) {
+    // const CsvTool::CsvRow& inRow = pRowData->csvRow;
+
+    ColRanges::const_iterator iter;
+    outCells.clear();
+    for (iter = colRanges.cbegin(); iter != colRanges.cend(); iter++) {
+        const ColRange& colRange = *iter;
+        for (ColIdx_t colIdx = colRange.from; colIdx <= colRange.to; colIdx++) {
+            outCells.push_back(inCells[colIdx]);
+        }
+    }
+
     return true;
 }
 
 
-bool CsvSelectColunns::end(CsvCmds& csvCmds, const CsvInputs& inputs) const {
+bool CsvSelectColunns::end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const {
     return false;
 }
+

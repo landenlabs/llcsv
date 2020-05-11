@@ -54,10 +54,11 @@ public:
     std::vector<CsvRowData> rowData;
     bool parallel = false;  // Read all files in parallel
     size_t fileIdx;
+    std::string file;
     
 public:
     CsvInputs(Order_t order) : CsvFiles(order) {
-        action = IN;
+        actionType = IN;
     }
     
     // Read all files in parallel (join or append columns)
@@ -66,13 +67,27 @@ public:
     }
     
     const CsvRowData& getRowData() const  {
+         rowData[fileIdx].pInputs = (CsvInputs*)this;
         return rowData[fileIdx];
     }
     CsvRowData& getRowData()  {
+         rowData[fileIdx].pInputs = this;
         return rowData[fileIdx];
     }
     size_t getRowNum() const {
         return rowData[fileIdx].inRowCount;
+    }
+    void setRowNum(size_t rowNum)  {
+        rowData[fileIdx].inRowCount = rowNum;
+    }
+    
+    // -- Parallel
+    size_t getParallelCnt() const {
+        return rowData.size();
+    }
+    CsvRowData& getParallelData(size_t _fileIdx)  {
+         rowData[_fileIdx].pInputs = this;
+        return rowData[_fileIdx];
     }
     
     virtual

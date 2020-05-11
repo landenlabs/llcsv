@@ -46,6 +46,6 @@ public:
     CsvAppendRows(Order_t order) : CsvModify(order) {
     }
     
-    bool modify(CsvCmds& csvCmds,  CsvInputs& inputFiles) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
 };
  

@@ -1,13 +1,38 @@
-/*
- *  Catch v2.4.2
- *  Generated: 2018-10-26 21:12:29.223927
- *  ----------------------------------------------------------
- *  This file has been merged from multiple headers. Please don't edit it directly
- *  Copyright (c) 2018 Two Blue Cubes Ltd. All rights reserved.
- *
- *  Distributed under the Boost Software License, Version 1.0. (See accompanying
- *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- */
+//-------------------------------------------------------------------------------------------------
+//
+//  llcsv      4/20/2020       Dennis Lang
+//
+//  CSV command line tool
+//
+//-------------------------------------------------------------------------------------------------
+//
+// Author: Dennis Lang - 2020
+// http://landenlabs.com/
+//
+// This file is part of llcsv project.
+//
+// ----- License ----
+//
+// Copyright (c) 2020 Dennis Lang
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+// of the Software, and to permit persons to whom the Software is furnished to do
+// so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 #ifndef TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
 #define TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
 // start catch.hpp
@@ -214,7 +239,7 @@ namespace Catch {
 // Visual C++
 #ifdef _MSC_VER
 
-#  if _MSC_VER >= 1900 // Visual Studio 2015 or newer
+#  if _MSC_VER >= 1900 // Visual Studio 2020 or newer
 #    define CATCH_INTERNAL_CONFIG_CPP17_UNCAUGHT_EXCEPTIONS
 #  endif
 
@@ -253,7 +278,7 @@ namespace Catch {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Check if string_view is available and usable
-// The check is split apart to work around v140 (VS2015) preprocessor issue...
+// The check is split apart to work around v140 (VS2020) preprocessor issue...
 #if defined(__has_include)
 #if __has_include(<string_view>) && defined(CATCH_CPP17_OR_GREATER)
 #    define CATCH_INTERNAL_CONFIG_CPP17_STRING_VIEW
@@ -3252,7 +3277,7 @@ namespace Generators {
     auto acquireGeneratorTracker( SourceLineInfo const& lineInfo ) -> IGeneratorTracker&;
 
     template<typename L>
-    // Note: The type after -> is weird, because VS2015 cannot parse
+    // Note: The type after -> is weird, because VS2020 cannot parse
     //       the expression used in the typedef inside, when it is in
     //       return type. Yeah, ¯\_(ツ)_/¯
     auto generate( SourceLineInfo const& lineInfo, L const& generatorExpression ) -> decltype(std::declval<decltype(generatorExpression())>()[0]) {

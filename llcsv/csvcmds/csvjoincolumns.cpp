@@ -36,12 +36,38 @@
 #include "csvjoincolumns.h"
 #include "csvcmds.h"
 
-bool CsvJoinColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
-    return csvCmds.setParallel(true, order)
-        ? true
-        : csvError.setFalse("Specify Input files before join");
+CsvJoinColumns::CsvJoinColumns(Order_t order) : CsvSelectColunns(order) {
 }
 
-bool CsvJoinColumns::modify(CsvCmds& csvCmds, CsvInputs& inputs) const {
+bool CsvJoinColumns::init(CsvCmds& csvCmds, CsvError& csvError)  {
+    return CsvSelectColunns::init(csvCmds, csvError);
+}
+
+bool CsvJoinColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe) {
+    //  outPipe.nextFile(CsvCmds::CSV_ERROR);
+    CsvTool::CsvRow& outRow = outPipe.getRowData().csvRow;
+    outRow.clear();
+    outRow.getHeaders().clear();
+    for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
+        appendColumns(outRow.getHeaders(), inputs.getParallelData(fileIdx).csvRow.getHeaders());
+        appendColumns(outRow, inputs.getParallelData(fileIdx).csvRow);
+        outPipe.setRowNum(inputs.getRowNum());
+        pipe = &outPipe;
+    }
     return true;
 }
+
+bool CsvJoinColumns::appendColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells) {
+   outCells.insert(outCells.end(), inCells.begin(), inCells.end());
+    
+    /*
+    for (iter = colRanges.cbegin(); iter != colRanges.cend(); iter++) {
+        const ColRange& colRange = *iter;
+        for (unsigned colIdx = colRange.from; colIdx <= colRange.to; colIdx++) {
+            outCells.push_back(inCells[colIdx]);
+        }
+    }
+     */
+    return true;
+}
+

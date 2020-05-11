@@ -34,25 +34,25 @@
 
 #pragma once
 
-#include "csvcmd.h"
-#include "csvinputfiles.h"
+#include "csvaction.h"
+#include "csvinputpipe.h"
 #include "csvtool.h"
 
 
-class CsvSelect : public CsvCmd {
+class CsvSelect : public CsvAction {
     std::string getName() const = 0;
-    bool init(CsvCmds& csvCmds, CsvError& cscvError) = 0;
+    bool init(CsvCmds& csvCmds, CsvError& csvError) = 0;
     
 public:
-    CsvSelect(Order_t order) : CsvCmd(order) {
-        action = SELECT;
+    CsvSelect(Order_t order) : CsvAction(order) {
+        actionType = SELECT;
     }
     
     // True if item selected.
     virtual
-    bool selected(CsvCmds& csvCmds, const CsvInputs& inputFiles) const = 0;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) = 0;
     
     // Past end of selection range
     virtual
-    bool end(CsvCmds& csvCmds, const CsvInputs& inputFiles) const = 0;
+    bool end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const = 0;
 };

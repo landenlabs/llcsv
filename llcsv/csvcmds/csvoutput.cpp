@@ -35,3 +35,50 @@
 #include "csvoutput.h"
 
 const char CsvOutput::outEOL = '\n';
+
+bool CsvOutput::init(CsvCmds& csvCmds, CsvError& csvError) {
+    bool ok = true;
+    ArgList::iterator iter = args.begin();
+    while (iter != args.end()) {
+        const std::string& arg = *iter;
+        if (arg[0] == '-' || arg[0] == '#') {
+            if (strcasecmp("headers", arg.c_str()+1) == 0) {
+                outHeaders = true;
+                outHeader = false;
+            } else if (strcasecmp("header", arg.c_str()+1) == 0) {
+                outHeader = true;
+                outHeaders = false;
+            } else {
+                ok = false;
+                csvError.append(getName() + " unknown argument " + arg);
+            }
+            args.erase(iter);
+        } else {
+            iter++;
+        }
+    }
+    
+    return ok;
+}
+
+bool CsvOutput::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
+    const CsvTool::CsvRow& row = inputs.rowData[inputs.fileIdx].csvRow;
+    if (outHeader || (outHeaders && &inputs != pInputs)) {
+        outHeader = false;
+        pInputs = &inputs;
+        writeRow1(csvCmds, row.getHeaders());
+    }
+    writeRow1(csvCmds, row);
+    return !getOut().fail();
+}
+
+bool CsvOutput::writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row) {
+    bool sep = false;
+    for (auto &col : row) {
+       if (sep) getOut() << ",";
+       getOut() << col;
+       sep = true;
+    }
+    getOut() << CsvOutput::outEOL;
+    return !getOut().fail();
+}

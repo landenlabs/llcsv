@@ -61,8 +61,8 @@ using namespace std;
 
 
 // Helper types
-typedef std::vector<lstring> StringList;
-typedef std::vector<std::regex> PatternList;
+
+
 typedef unsigned int uint;
 
 #if 0
@@ -70,9 +70,7 @@ typedef unsigned int uint;
 std::regex fromPat;
 lstring toPat;
 lstring backupDir;
-PatternList includeFilePatList;
-PatternList excludeFilePatList;
-StringList fileDirList;
+
 
 bool showPattern = false;
 bool inverseMatch = false;
@@ -172,192 +170,7 @@ static std::string& ConvertSpecialChar(std::string& inOut)
     return inOut;;
 }
 
-#ifdef WIN32
-const char SLASH_CHAR('\\');
-#else
-const char SLASH_CHAR('/');
-#endif
 
-// ---------------------------------------------------------------------------
-// Extract name part from path.
-lstring& getName(lstring& outName, const lstring& inPath)
-{
-    size_t nameStart = inPath.rfind(SLASH_CHAR) + 1;
-    if (nameStart == 0)
-        outName = inPath;
-    else
-        outName = inPath.substr(nameStart);
-    return outName;
-}
-
-// ---------------------------------------------------------------------------
-// Return true if inPath (filename part) matches pattern in patternList
-bool FileMatches(const lstring& inName, const PatternList& patternList, bool emptyResult)
-{
-    if (patternList.empty() || inName.empty())
-        return emptyResult;
-    
-    for (size_t idx = 0; idx != patternList.size(); idx++)
-        if (std::regex_match(inName.begin(), inName.end(), patternList[idx]))
-            return true;
-    
-    return false;
-}
-
-// ---------------------------------------------------------------------------
-void printParts(
-        const char* customFmt,
-        const char* filepath,
-        size_t fileOffset,
-        size_t matchLen,
-        const lstring& matchStr)
-{
-    // TODO - handle custom printf syntax to get to path parts:
-    //    %#.#s    s=fullpath,  p=path only, n=name only, e=extension only f=filename name+ext
-    //    %0#d     o=offset,  l=length
-    // printf(filepath, fileOffset, len, filepath);
-    
-    const int NONE = 12345;
-    lstring itemFmt;
-    
-    char* fmt = (char*)customFmt;
-    while (*fmt) {
-        char c = *fmt;
-        if (c != '%') {
-            putchar(c);
-            fmt++;
-        } else {
-            const char* begFmt = fmt;
-            int precision = NONE;
-            // int width = (int)strtol(fmt+1, &fmt, 10);
-            if (*fmt == '.') {
-                precision = (int)strtol(fmt+1, &fmt, 10);
-            }
-            c = *fmt;
-        
-            itemFmt = begFmt;
-            itemFmt.resize(fmt - begFmt);
-           
-            switch (c) {
-                case 's':
-                    itemFmt += "s";
-                    printf(itemFmt, filepath);
-                    break;
-                case 'p':
-                   itemFmt += "s";
-                   printf(itemFmt, Directory_files::parts(filepath, true, false, false).c_str());
-                   break;
-                case 'r':   // relative path
-                    itemFmt += "s";
-                    printf(itemFmt, Directory_files::parts(filepath, true, false, false).replaceStr(cwd, "").c_str());
-                    break;
-                case 'n':
-                    itemFmt += "s";
-                    printf(itemFmt, Directory_files::parts(filepath, false, true, false).c_str());
-                    break;
-                case 'e':
-                    itemFmt += "s";
-                    printf(itemFmt, Directory_files::parts(filepath, false, false, true).c_str());
-                    break;
-                case 'f':
-                    itemFmt += "s";
-                    printf(itemFmt, Directory_files::parts(filepath, false, true, true).c_str());
-                    break;
-                case 'o':
-                    itemFmt += "lu";    // unsigned long formatter
-                    printf(itemFmt, fileOffset);
-                    break;
-                case 'l':
-                    itemFmt += "lu";    // unsigned long formatter
-                    printf(itemFmt, matchLen);
-                    break;
-                case 'm':
-                    itemFmt += "s";
-                    printf(itemFmt, matchStr.c_str());
-                    break;
-                default:
-                    putchar(c);
-                    break;
-            }
-            fmt++;
-        }
-    }
-}
-
-
-// ---------------------------------------------------------------------------
-static size_t ActOnFile(const lstring& fullname)
-{
-    size_t fileCount = 0;
-    lstring name;
-    getName(name, fullname);
-    
-    if (!name.empty()
-        && !FileMatches(name, excludeFilePatList, false)
-        && FileMatches(name, includeFilePatList, true))
-    {
-        if (doReplace)
-        {
-#if 0
-            if (ReplaceFile(fullname, name))
-            {
-                fileCount++;
-                printParts(printPosFmt, fullname, 0, 0, "");
-            }
-#endif
-        }
-        else
-        {
-#if 0
-            unsigned matchCnt = FindGrep(fullname);
-            if (matchCnt != 0)
-            {
-                fileCount++;
-                printParts(printPosFmt, fullname, 0, 0, "");
-            }
-#endif
-        }
-    }
-    
-    return fileCount;
-}
-
- 
-// ---------------------------------------------------------------------------
-static size_t ActOnFiles(const lstring& dirname)
-{
-    Directory_files directory(dirname);
-    lstring fullname;
-    
-    size_t fileCount = 0;
-    
-    struct stat filestat;
-    try {
-        if (stat(dirname, &filestat) == 0 && S_ISREG(filestat.st_mode))
-        {
-            fileCount += ActOnFile(dirname);
-        }
-    }
-    catch (exception ex)
-    {
-        // Probably a pattern, let directory scan do its magic.
-    }
-
-    while (directory.more())
-    {
-        directory.fullName(fullname);
-        if (directory.is_directory())
-        {
-            fileCount += ActOnFile(fullname);
-        }
-        else if (fullname.length() > 0)
-        {
-            fileCount += ActOnFile(fullname);
-        }
-    }
-    
-    return fileCount;
-}
 
 
 // ---------------------------------------------------------------------------
@@ -378,6 +191,28 @@ std::regex getRegEx(const char* value)
     
     patternErrCnt++;
     return std::regex("");
+}
+
+void opendir() {
+            char cwdTmp[256];
+            cwd = getcwd(cwdTmp, sizeof(cwdTmp));
+            cwd += Directory_files::SLASH;
+            
+            if (!toPat.empty() && pFilter == &lineFilter) {
+                cerr << "\a\nRange filter does not work for replacement only searching\a\n" << std::endl;
+            }
+            
+            if (fileDirList.size() == 1 && fileDirList[0] == "-") {
+                string filePath;
+                while (std::getline(std::cin, filePath)) {
+                    std::cerr << ScanFiles(<#const lstring &fullname#>)(filePath) << std::endl;
+                }
+            } else {
+                for (auto const& filePath : fileDirList)
+                {
+                    std::cerr << ScanFiles(filePath) << std::endl;
+                }
+            }
 }
 #endif
 

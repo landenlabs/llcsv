@@ -34,20 +34,35 @@
 
 #pragma once
 
+#include <cstddef>
+#include <vector>
+#include "range.h"
 #include "csvselect.h"
 
-
+typedef size_t ColIdx_t;
+typedef Range<ColIdx_t> ColRange;
+  
 class CsvSelectColunns : public CsvSelect {
     
+protected:
+    typedef std::vector<ColRange> ColRanges;
+    std::vector<ColRange> colRanges;
     bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
+    bool initNames(CsvCmds& csvCmds);
+    const CsvRowData* pRowData;
+    ColIdx_t minCol = 0;
+    ColIdx_t maxCol = -1;
+    CsvInputPipe outPipe;
+    
+    bool copySelectColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells);
     
 public:
     std::string getName() const  override { return "SelectColumns"; }
-    CsvSelectColunns(Order_t order) : CsvSelect(order) {
-    }
+    CsvSelectColunns(Order_t order);
     
-    bool selected(CsvCmds& csvCmds, const CsvInputs& inputFiles) const override;
+    bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;
     
     // Past end of selection range
-    bool end(CsvCmds& csvCmds, const CsvInputs& inputs) const override;
+    bool end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const override;
+
 };

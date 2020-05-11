@@ -36,11 +36,48 @@
 #include "csvappendcolumns.h"
 #include "csvcmds.h"
 
-bool CsvAppendColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
+bool CsvAppendColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
+    bool okay = CsvSelectColunns::init(csvCmds, csvError);
     csvCmds.setParallel(true, order);
-    return true;
+    // outPipe.init(csvCmds, csvError); // Already done in parent class
+    outPipe.nextFile(csvError);
+    return okay;
 }
 
-bool CsvAppendColumns::modify(CsvCmds& csvCmds,  CsvInputs& inputFiles) const {
+bool CsvAppendColumns::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe)  {
+  
+    CsvTool::CsvRow& outRow = outPipe.getRowData().csvRow;
+    outRow.clear();
+    
+    bool okay = true;
+    const CsvRowData* pNextRowData = &inputs.getRowData();
+    if (pNextRowData != pRowData) {
+        pRowData = pNextRowData;
+        okay = initNames(csvCmds);
+        for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
+            appendColumns(outRow.getHeaders(), inputs.getParallelData(fileIdx).csvRow.getHeaders());
+        }
+    }
+    for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
+         appendColumns(outRow, inputs.getParallelData(fileIdx).csvRow);
+    }
+    outPipe.setRowNum(inputs.getRowNum());
+    pipe = &outPipe;
+    return okay;
+}
+
+bool CsvAppendColumns::appendColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells) {
+    if (colRanges.empty()) {
+        outCells.insert(outCells.end(), inCells.begin(), inCells.end());
+    } else {
+        ColRanges::const_iterator iter;
+        for (iter = colRanges.cbegin(); iter != colRanges.cend(); iter++) {
+            const ColRange& colRange = *iter;
+            for (ColIdx_t colIdx = colRange.from; colIdx <= colRange.to; colIdx++) {
+                outCells.push_back(inCells[colIdx]);
+            }
+        }
+    }
+    
     return true;
 }

@@ -39,19 +39,15 @@
 
 
 
-bool CsvOutputTable::init(CsvCmds& csvCmds, CsvError& cscvError) {
-    return true;
+bool CsvOutputTable::init(CsvCmds& csvCmds, CsvError& csvError) {
+    return  CsvOutput::init(csvCmds, csvError);
 }
 
+std::ostream& CsvOutputTable::getOut() {
+    return std::cout;
+}
+
+// TODO - remove this method.
 bool CsvOutputTable::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) {
-    bool sep = false;
-    const CsvTool::CsvRow& row = inputs.rowData[inputs.fileIdx].csvRow;
-    
-    for (auto &col : row) {
-        if (sep) std::cout << ",";
-        std::cout << col;
-        sep = true;
-    }
-    std::cout << CsvOutput::outEOL;
-    return true;
+    return CsvOutput::writeRow(csvCmds, inputs);
 }

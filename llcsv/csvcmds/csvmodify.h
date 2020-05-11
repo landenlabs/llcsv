@@ -34,20 +34,24 @@
 
 #pragma once
 
-#include "csvcmd.h"
-#include "csvinputfiles.h"
+#include "csvaction.h"
+#include "csvinputpipe.h"
 #include "csvtool.h"
 
-class CsvModify : public CsvCmd {
+class CsvModify : public CsvAction {
     
-    bool init(CsvCmds& csvCmds, CsvError& cscvError) = 0;
+    bool init(CsvCmds& csvCmds, CsvError& cscvError) override = 0 ;
     
 public:
-    std::string getName() const = 0;
-    CsvModify(Order_t order) : CsvCmd(order) {
-        action = MODIFY;
+    std::string getName() const override = 0 ;
+    CsvModify(Order_t order) : CsvAction(order) {
+        actionType = MODIFY;
     }
     
     virtual
-    bool modify(CsvCmds& csvCmds, CsvInputs& inputFiles) const = 0;
+    bool action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe)  override = 0 ;
+    
+    bool end(CsvCmds& csvCmds, const CsvInputs& inputs, CsvInputs*& pipe) const override {
+        return false;
+    }
 };

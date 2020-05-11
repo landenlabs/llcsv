@@ -44,8 +44,10 @@ class CsvOutputTable : public CsvOutput {
 public:
     std::string getName() const override { return "OutputTable"; }
     
-    CsvOutputTable(Order_t order) : CsvOutput(order) {
+    CsvOutputTable(Order_t order) : CsvOutput(order)
+    {
     }
-        
+       
+    std::ostream& getOut() override;
     bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) override;
 };

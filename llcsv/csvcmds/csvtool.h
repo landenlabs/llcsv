@@ -95,7 +95,9 @@ typedef IBuffer CsvStream;
 typedef std::ifstream CsvStream;
 #endif
 
-class CsvHeaders : public std::vector<std::string> {
+typedef std::vector<std::string> CsvCells;
+
+class CsvHeaders : public CsvCells {
 public:
     CsvHeaders() = default;
     // CsvHeaders(const CsvHeaders& other) = default;
@@ -117,7 +119,8 @@ public:
     const unsigned npos = -1;
 };
 
-class CsvRow : public std::vector<std::string> {
+typedef CsvCells CsvRowColumns;
+class CsvRow : public CsvRowColumns {
     
     unsigned rowIdx; // 1...n
     CsvHeaders headers;
@@ -132,11 +135,18 @@ public:
         return at(0);
     }
     
+    void setHeaders() {
+        headers.swap(*this);
+        reserve(std::max(capacity(), headers.size()));
+    }
     void setHeaders(const CsvHeaders& _headers) {
         headers = _headers;
         reserve(std::max(capacity(), headers.size()));
     }
     const CsvHeaders& getHeaders() const {
+        return headers;
+    }
+    CsvHeaders& getHeaders() {
         return headers;
     }
 };

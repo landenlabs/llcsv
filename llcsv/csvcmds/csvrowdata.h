@@ -35,10 +35,18 @@
 #pragma once
 
 #include <string>
+#include <algorithm>    // std::max
+#include "utils.h"
+
+// Forward
+class CsvInputs;
 
 struct CsvRowData {
     CsvTool::CsvRow csvRow;
     size_t inRowCount;
+    
+    mutable
+    const CsvInputs* pInputs;  
     
     const std::string& getColumn(const std::string& name, unsigned colNum) const {
         return (colNum > 0) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
@@ -46,5 +54,19 @@ struct CsvRowData {
     
     std::string& getColumn(const std::string& name, unsigned colNum)  {
         return (colNum > 0) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
+    }
+    
+    void appendCol(const std::string& colName, size_t colNum, const char* val) {
+        if (colName.length() != 0) {
+            size_t pos = indexOf(csvRow.getHeaders(), colName);
+            if (pos == NPOS) {
+                csvRow.getHeaders().push_back(colName);
+                colNum = csvRow.getHeaders().size()-1;
+            } else {
+                colNum = pos;
+            }
+        }
+        csvRow.resize(std::max(csvRow.size(), colNum+1));
+        csvRow[colNum] = val;
     }
 };

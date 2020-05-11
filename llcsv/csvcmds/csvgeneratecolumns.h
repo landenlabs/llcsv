@@ -51,13 +51,13 @@ class CsvGenerateColumns : public CsvInputs {
     typedef  std::vector<ColItem> RowFields;
     std::vector<RowFields> fileFields;
   
-    CsvSelectRows defSelRows;
-    CsvSelectRows* pSelRows;
+    // CsvSelectRows defSelRows;
+    // CsvSelectRows* pSelRows;
     CsvCmds* pCsvCmds = nullptr;
  
 public:
     size_t nextFileIdx;
-    std::string file;
+
     bool parallel = false;  // Read all files in parallel
     
 public:
@@ -65,8 +65,11 @@ public:
     
     // [count]:3d(1,1000,2),[name]:10s(hello),[price]:5.2f(-123.45,123.45)
     // #nextFile
-    CsvGenerateColumns(Order_t order) : CsvInputs(order), defSelRows(order, "1-20"), pSelRows(&defSelRows) {
-        argREstr = "(#[a-zA-Z]+|([0-9+]+|\\[[^]]+]):[0-9.]+[dsfxr]\\([^,]+(,[^,]+)*\\))";
+    // -nextFile
+    CsvGenerateColumns(Order_t order) :
+        CsvInputs(order)
+    {
+        argREstr = "([#-][a-zA-Z]+|([0-9+]+|\\[[^]]+]):[0-9.]*[dsfxnr]\\([^,]+(,[^,]+)*\\))";
         argRE = std::regex(argREstr, std::regex::extended);
     }
     

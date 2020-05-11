@@ -34,12 +34,18 @@
 
 #pragma once
 
+#include <iostream>
 #include "csvfiles.h"
 #include "csvinputs.h"
 
 class CsvOutput : public CsvFiles {
    
+protected:
+    bool outHeader = false;
+    bool outHeaders = false;
+    const CsvInputs* pInputs; 
     bool init(CsvCmds& csvCmds, CsvError& cscvError) = 0;
+    bool writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row);
     
 public:
      static const char outEOL;   //  = '\n';
@@ -48,9 +54,12 @@ public:
     std::string getName() const = 0;
     
     CsvOutput(Order_t order) : CsvFiles(order) {
-        action = OUT;
+        actionType = OUT;
     }
     
     virtual
     bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) = 0;
+    
+    virtual
+    std::ostream& getOut() = 0;
 };

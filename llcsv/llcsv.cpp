@@ -53,13 +53,19 @@
 #include "csvcmds/csvinputfiles.h"
 #include "csvcmds/csvoutputfile.h"
 #include "csvcmds/csvoutputtable.h"
+
 #include "csvcmds/csvselectrows.h"
 #include "csvcmds/csvselectcolumns.h"
+
 #include "csvcmds/csvappendrows.h"
 #include "csvcmds/csvappendcolumns.h"
+
+#include "csvcmds/csvformatcolumns.h"
 #include "csvcmds/csvjoincolumns.h"
 #include "csvcmds/csvmatchcolumns.h"
+#include "csvcmds/csvadjustcolumns.h"
 #include "csvcmds/csvreplacecolumns.h"
+
 #include "csvcmds/csvsortrowsbycolumnkeys.h"
 #include "csvcmds/csvgeneratecolumns.h"
 
@@ -143,12 +149,32 @@ int main(int argc, char* argv[])
     int result = -1;
     if (argc == 1)
     {
-        cerr << "\n" << argv[0] << "  Dennis Lang v1.2 (landenlabs.com) " __DATE__ << "\n"
+        cerr << "\n" << argv[0] << "  Dennis Lang v1.1 (landenlabs.com) " __DATE__ << "\n"
             << "\nDes: CSV manipulator command line tool\n"
-            "Use: llcsv [options] directories...\n"
+            "Use: llcsv [actions] ...\n"
+            "  General pipeline   input selection modify output"
             "\n"
-            "Main options:\n"
-            "   appendRows files... \n"
+            "Actions:\n"
+            "   Inputs: \n"
+            "      inputFiles \n"
+            "      generate \n"
+            "   Selection:\n"
+            "      rows\n"
+            "      columns\n"
+            "      match\n"
+            "   Modify:\n"
+            "     appendRows   \n"
+            "     appendColumns \n"
+            "     formatColumns (na)\n"
+            "     joinColumns (na)\n"
+            "     replaceColumns \n"
+            "     sort (na)\n"
+            "     transpose (na)\n"
+            "   Output:\n"
+            "     outputFiles\n"
+            "     outputTable\n"
+            "   Help:\n"
+            "     help action"
             "\n"
             "Examples\n"
             "\n";
@@ -171,7 +197,7 @@ int main(int argc, char* argv[])
             {
                 // lstring cmd = cmdParts[0];
                 bool okay = false;
-                CsvError csvError;
+                CsvError& csvError = CsvCmds::CSV_ERROR;
                 
                 if (!csvCmds.empty()) {
                     okay = csvCmds.back()->addArgs(argStr, csvError);
@@ -188,6 +214,10 @@ int main(int argc, char* argv[])
                             csvCmds.push_back(std::make_shared<CsvAppendColumns>(order++));
                             continue;
                         }
+                        if ((okay = ValidOption("adjustColumns", argStr))) {
+                           csvCmds.push_back(std::make_shared<CsvAdjustColumns>(order++));
+                           continue;
+                        }
                         break;
                     case 'c':
                         if ((okay = ValidOption("columns", argStr))) {
@@ -203,7 +233,7 @@ int main(int argc, char* argv[])
                                 //  1:3d(,")   add commas and inclose in quotes
                                 //  2:10.10s   pad and truncate to fixed length 10
                                 //  10:1s("t")
-                                // csvCmds.push_back(std::make_shared<CsvFormatColumns>(order++));
+                                csvCmds.push_back(std::make_shared<CsvFormatColumns>(order++));
                                 continue;
                             }
                             break;
@@ -267,6 +297,14 @@ int main(int argc, char* argv[])
                         }
                         break;
                         
+                    case 't':
+                       if ((okay = ValidOption("transpose", argStr))) {
+                           /*   TODO
+                            csvCmds.push_back(std::make_shared<CsvTranspose>(order++));
+                           continue;
+                            */
+                       }
+                       break;
                 }
                 
                 if (!okay) {
@@ -299,24 +337,3 @@ int main(int argc, char* argv[])
     return result;
 }
 
-#if 0
-            char cwdTmp[256];
-            cwd = getcwd(cwdTmp, sizeof(cwdTmp));
-            cwd += Directory_files::SLASH;
-            
-            if (!toPat.empty() && pFilter == &lineFilter) {
-                cerr << "\a\nRange filter does not work for replacement only searching\a\n" << std::endl;
-            }
-            
-            if (fileDirList.size() == 1 && fileDirList[0] == "-") {
-                string filePath;
-                while (std::getline(std::cin, filePath)) {
-                    std::cerr << ActOnFiles(<#const lstring &fullname#>)(filePath) << std::endl;
-                }
-            } else {
-                for (auto const& filePath : fileDirList)
-                {
-                    std::cerr << ActOnFiles(filePath) << std::endl;
-                }
-            }
-#endif
