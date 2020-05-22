@@ -38,6 +38,9 @@
 #include <string>
 #include <regex>
 
+namespace StrUtils {
+
+ 
 inline
 std::string& remove(std::string& str, const char* find) {
     while (*find) {
@@ -77,6 +80,33 @@ std::string& removeWrapper(std::string& str, const char* find) {
         }
     }
     return str;
+}
+
+
+
+inline
+std::string& toUpper(std::string& inOut) {
+    for (size_t idx = 0; idx < inOut.length(); idx++) {
+        inOut[idx] = toupper(inOut[idx]);
+    }
+    return inOut;
+}
+inline
+std::string& toLower(std::string& inOut) {
+    for (size_t idx = 0; idx < inOut.length(); idx++) {
+        inOut[idx] = tolower(inOut[idx]);
+    }
+    return inOut;
+}
+inline
+std::string& toCapitalize(std::string& inOut) {
+    bool isWord = true;
+    for (size_t idx = 0; idx < inOut.length(); idx++) {
+        char& c = inOut[idx];
+        c = isWord ? tolower(c) : tolower(c);
+        isWord = isspace(c);
+    }
+    return inOut;
 }
 
 inline
@@ -131,4 +161,5 @@ bool greaterNum(TT srcVal, TT matVal) {
 template<typename TT>
 bool greaterEqualNum(TT srcVal, TT matVal) {
     return srcVal >= matVal;
+}
 }

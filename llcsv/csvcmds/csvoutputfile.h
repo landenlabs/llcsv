@@ -39,8 +39,11 @@
 class CsvOutputFile : public CsvOutput {
     
     std::ofstream out;
+    std::string outFilename;
+    std::string nextOutFilename;
     
     bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
+    std::string& getNextOutFilename(CsvCmds& csvCmds);
     
 public:
     std::string getName() const override { return "OutputFile"; }
@@ -51,4 +54,10 @@ public:
     
     std::ostream& getOut() override;
     bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) override;
+    
+    void endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) override;
+    
+    bool open(CsvCmds& csvCmds);
+    void close() override;
+    
 };

@@ -261,6 +261,8 @@ lstring getPartDir(const char* filepath) {
     size_t endDir = result.find_last_of(Directory_files::SLASH);
     if (endDir != string::npos)
         result = result.substr(0, endDir);
+    else
+        result = "";
     return result;
 }
 
@@ -278,7 +280,7 @@ lstring getPartName(const char* filepath) {
 lstring getPartExt(const char* filepath) {
     lstring result = filepath;
     size_t pos = result.find_last_of(Directory_files::EXTN);
-    return result.substr(pos);
+    return (pos != std::string::npos) ? result.substr(pos) : result.substr(0,0);
 }
 
 

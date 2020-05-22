@@ -80,8 +80,14 @@ public:
     }
     
     lstring& replaceStr(const char* from, const char* to) {
-        size_t pos = find(from);
-        replace(pos, strlen(from), to);
+        size_t pos = -1;
+        do {
+            pos = find(from, pos+1);
+            if (pos != std::string::npos) {
+                replace(pos, strlen(from), to);
+                pos += strlen(to) - strlen(from);
+            }
+        } while (pos != std::string::npos);
         return *this;
     }
 

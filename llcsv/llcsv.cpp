@@ -53,6 +53,7 @@
 #include "csvcmds/csvinputfiles.h"
 #include "csvcmds/csvoutputfile.h"
 #include "csvcmds/csvoutputtable.h"
+#include "csvcmds/csvoutputtranspose.h"
 
 #include "csvcmds/csvselectrows.h"
 #include "csvcmds/csvselectcolumns.h"
@@ -144,40 +145,45 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 }
 
 // ---------------------------------------------------------------------------
+void help() {
+    cerr << "  Dennis Lang v1.1 (LandenLabs.com) " __DATE__ << "\n"
+         << "\nDes: CSV manipulator command line tool\n"
+         "Use: llcsv [actions] ...\n"
+         "  General pipeline   input selection modify output"
+         "\n"
+         "Actions:\n"
+         "   Inputs: \n"
+         "      inputFiles \n"
+         "      generate \n"
+         "   Selection:\n"
+         "      rows\n"
+         "      columns\n"
+         "      match\n"
+         "   Modify:\n"
+         "     appendRows   \n"
+         "     appendColumns \n"
+         "     formatColumns (na)\n"
+         "     joinColumns (na)\n"
+         "     replaceColumns \n"
+         "     sort (na)\n"
+         "     transpose (na)\n"
+         "   Output:\n"
+         "     outputFiles\n"
+         "     outputTable\n"
+         "   Help:\n"
+         "     help action"
+         "\n"
+         "Examples\n"
+         "\n";
+}
+
+// ---------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
     int result = -1;
     if (argc == 1)
     {
-        cerr << "\n" << argv[0] << "  Dennis Lang v1.1 (landenlabs.com) " __DATE__ << "\n"
-            << "\nDes: CSV manipulator command line tool\n"
-            "Use: llcsv [actions] ...\n"
-            "  General pipeline   input selection modify output"
-            "\n"
-            "Actions:\n"
-            "   Inputs: \n"
-            "      inputFiles \n"
-            "      generate \n"
-            "   Selection:\n"
-            "      rows\n"
-            "      columns\n"
-            "      match\n"
-            "   Modify:\n"
-            "     appendRows   \n"
-            "     appendColumns \n"
-            "     formatColumns (na)\n"
-            "     joinColumns (na)\n"
-            "     replaceColumns \n"
-            "     sort (na)\n"
-            "     transpose (na)\n"
-            "   Output:\n"
-            "     outputFiles\n"
-            "     outputTable\n"
-            "   Help:\n"
-            "     help action"
-            "\n"
-            "Examples\n"
-            "\n";
+        help();
     }
     else
     {
@@ -299,18 +305,22 @@ int main(int argc, char* argv[])
                         
                     case 't':
                        if ((okay = ValidOption("transpose", argStr))) {
-                           /*   TODO
-                            csvCmds.push_back(std::make_shared<CsvTranspose>(order++));
+                           csvCmds.push_back(std::make_shared<CsvOutputTranspose>(order++));
                            continue;
-                            */
                        }
                        break;
                 }
                 
                 if (!okay) {
                     // TODO - use csvError
-                    std::cerr <<  csvCmds.back()->getName();
-                    std::cerr << " Unknown option:'" << argStr << "'\n";
+                    // std::cerr << CsvCmds::CSV_ERROR.msg << " " << CsvCmds::CSV_ERROR.arg << std::endl;
+                    if (!csvCmds.empty()) {
+                        std::cerr <<  csvCmds.back()->getName();
+                        std::cerr << " Unknown option:'" << argStr << "'\n";
+                    } else {
+                        std::cerr << "No valid commands\n";
+                        help();
+                    }
                     optionErrCnt++;
                 }
             }
@@ -323,7 +333,7 @@ int main(int argc, char* argv[])
     
         if (!csvCmds.empty() &&  optionErrCnt == 0)
         {
-            csvCmds.dump(std::cout);
+            csvCmds.dump(std::cerr);
             result = csvCmds.init(CsvCmds::CSV_ERROR);
         }
         

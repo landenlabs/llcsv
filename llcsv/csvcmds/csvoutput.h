@@ -48,7 +48,8 @@ protected:
     bool writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row);
     
 public:
-     static const char outEOL;   //  = '\n';
+    char outEOL = '\n';
+    char outDelim = ',';
     
 public:
     std::string getName() const = 0;
@@ -58,8 +59,16 @@ public:
     }
     
     virtual
+    void endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
+    }
+    
+    virtual
     bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) = 0;
     
     virtual
     std::ostream& getOut() = 0;
+    
+    virtual
+    void close() {
+    }
 };

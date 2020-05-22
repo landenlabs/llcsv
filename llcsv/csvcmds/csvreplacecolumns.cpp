@@ -55,11 +55,6 @@ bool CsvReplaceColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
             const std::string& fromPatStr = match[2];
             const std::string& toPat = match[3];
             
-            std::cout << "colName=" << colname
-                << " fromPat=" << fromPatStr
-                << " toPat=" << toPat
-                << std::endl;
-            
             replaceFields.push_back(std::make_shared<ReplaceField>(colname, fromPatStr, toPat));
         }
     }

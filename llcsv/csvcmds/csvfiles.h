@@ -46,6 +46,7 @@ protected:
     virtual ~CsvFiles() = default; // to silence -Wall warnings
     
     bool hasHeader = false;
+    char separator = ',';
     
 };
 

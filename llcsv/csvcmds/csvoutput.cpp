@@ -34,13 +34,14 @@
 
 #include "csvoutput.h"
 
-const char CsvOutput::outEOL = '\n';
+
 
 bool CsvOutput::init(CsvCmds& csvCmds, CsvError& csvError) {
     bool ok = true;
     ArgList::iterator iter = args.begin();
     while (iter != args.end()) {
         const std::string& arg = *iter;
+        size_t argLen = arg.length()-1;
         if (arg[0] == '-' || arg[0] == '#') {
             if (strcasecmp("headers", arg.c_str()+1) == 0) {
                 outHeaders = true;
@@ -48,6 +49,10 @@ bool CsvOutput::init(CsvCmds& csvCmds, CsvError& csvError) {
             } else if (strcasecmp("header", arg.c_str()+1) == 0) {
                 outHeader = true;
                 outHeaders = false;
+            } else if (strncasecmp("tab-separator", arg.c_str()+1, argLen) == 0) {
+                outDelim = '\t';
+            }  else if (strncasecmp("cr-eol", arg.c_str()+1, argLen) == 0) {
+                outEOL = '\r';
             } else {
                 ok = false;
                 csvError.append(getName() + " unknown argument " + arg);
@@ -75,7 +80,7 @@ bool CsvOutput::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
 bool CsvOutput::writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row) {
     bool sep = false;
     for (auto &col : row) {
-       if (sep) getOut() << ",";
+       if (sep) getOut() << outDelim;
        getOut() << col;
        sep = true;
     }

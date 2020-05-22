@@ -57,7 +57,7 @@ bool CsvMatchColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
             const std::string& matchOp = matchSpec[1] = match[2];
             matchSpec[3] = match[3];
             const std::string& matchType = matchSpec[2] =matchSpec[3][0];
-            const std::string& value = removeWrapper(matchSpec[3], "/'\"");
+            const std::string& value = StrUtils::removeWrapper(matchSpec[3], "/'\"");
             const std::string& opt = matchSpec[4] = match[4];
             
             /*
@@ -78,7 +78,7 @@ bool CsvMatchColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
                     matchFields.push_back(std::make_shared<MatRegField>(matchSpec));
                    break;
                 default:
-                    matchFields.push_back(std::make_shared<MatNumField<double>>(matchSpec, *toDbl));
+                    matchFields.push_back(std::make_shared<MatNumField<double>>(matchSpec, *StrUtils::toDbl));
                     break;
            }
         }

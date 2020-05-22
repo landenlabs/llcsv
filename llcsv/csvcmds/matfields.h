@@ -52,7 +52,7 @@ protected:
 public:
     MatchField(const MatchSpecs& matSpec) {
         name = matSpec[0];
-        remove(name, "[]");
+        StrUtils::remove(name, "[]");
         colNum = (unsigned)strtoul(name.c_str(), nullptr, 10);
         op = matSpec[1];
         typ = matSpec[2];
@@ -78,10 +78,10 @@ public:
         if (typ.length() > 0)
         switch (typ[tidx]) {
           case '~':
-              matchPtr = (opt=="i") ? &containsNoCase : &containsCase;
+              matchPtr = (opt=="i") ? &StrUtils::containsNoCase : &StrUtils::containsCase;
               break;
           case '=':
-              matchPtr = (opt=="i") ? &equalsNoCase : &equalsCase;
+              matchPtr = (opt=="i") ? &StrUtils::equalsNoCase : &StrUtils::equalsCase;
               break;
           }
     }
@@ -133,27 +133,27 @@ public:
         switch (op[0]) {
              case '!':
              case 'n':   // ne
-                matchPtr = &notEqualNum<TT>;
+                matchPtr = &StrUtils::notEqualNum<TT>;
                 break;
             case '=':
             case 'e':   // eq
-                matchPtr = &equalNum<TT>;
+                matchPtr = &StrUtils::equalNum<TT>;
                 break;
             case 'l':   // maybe lt
                 if (op[1] == 'e') {
-                    matchPtr = &lessEqualNum<TT>;
+                    matchPtr = &StrUtils::lessEqualNum<TT>;
                     break;
                 }
             case '<':
-                matchPtr = &lessNum<TT>;
+                matchPtr = &StrUtils::lessNum<TT>;
                 break;
             case 'g':
                   if (op[1] == 'e') {
-                      matchPtr = &greaterEqualNum<TT>;
+                      matchPtr = &StrUtils::greaterEqualNum<TT>;
                       break;
                   }
             case '>':
-                matchPtr = &greaterNum<TT>;
+                matchPtr = &StrUtils::greaterNum<TT>;
                 break;
         }
     }

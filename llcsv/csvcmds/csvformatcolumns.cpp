@@ -71,20 +71,21 @@ CsvFormatColumns::CsvFormatColumns(Order_t order) :
 }
 
 
+// Format columns
+//
+// column:format(extra)...
+//
+// column = [name] or number, ex:[count] or 1
+// format = %w.pX
+//          Where X is s=string, f=float, d=decimal, x=hex
+// extra  = optional actions, such as trim, quote, Capitalize, Lowercase, Uppercase
+// Example:
+//          [count]:3d(),[name]:10s(trim,cap,quote),[price]:5.2f()
 bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
-    // pCsvCmds = &csvCmds;
-    // nextFileIdx = fileIdx = 0;
-    /*
-    pSelRows = csvCmds.findCmd<CsvSelectRows>(typeid(CsvSelectRows), FindFilter(order));
-    if (pSelRows == nullptr) {
-        csvError.append("Must proceed Generate with RowSelect to define maximum rows");
-    }
-    */
-    
     numFiles = 1;
     fileFields.resize(numFiles);
-    std::vector<std::shared_ptr<GenFields>>* pFields = &fileFields.back();
-    GenSpecs genSpec(4);
+    std::vector<std::shared_ptr<FmtFields>>* pFields = &fileFields.back();
+    FmtSpecs genSpec(4);
     
     const char* rxStr = "([#-][^,]+|([0-9+]+|\\[[^]]+]):([0-9.]*)([dsfx])(\\(.*\\)))";
     std::regex rx = std::regex(rxStr, std::regex::extended);
@@ -107,13 +108,13 @@ bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
                 switch (fieldTyp[0]) {
                     case 'x':
                     case 'd':
-                        pFields->push_back(std::make_shared<GenDecField>(genSpec));
+                        pFields->push_back(std::make_shared<FmtDecField>(genSpec));
                         break;
                     case 'f':
-                        pFields->push_back(std::make_shared<GenFltField>(genSpec));
+                        pFields->push_back(std::make_shared<FmtFltField>(genSpec));
                         break;
                     case 's':
-                        pFields->push_back(std::make_shared<GenStrField>(genSpec));
+                        pFields->push_back(std::make_shared<FmtStrField>(genSpec));
                         break;
                 }
             } else {

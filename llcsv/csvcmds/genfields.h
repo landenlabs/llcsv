@@ -48,7 +48,7 @@ struct GenFields {
     std::string fmt;
     GenFields(const GenSpecs& genSpec) {
         name = genSpec[0];
-        remove(name, "[]");
+        StrUtils::remove(name, "[]");
         widthStr = genSpec[1];
         width = atoi(widthStr.c_str());
         fmt = "%" + widthStr + genSpec[2];
@@ -65,7 +65,7 @@ struct GenDecField : public GenFields {
 
     GenDecField(const GenSpecs& genSpec) : GenFields(genSpec) {
         std::string valStr = genSpec[3];
-        remove(valStr, "()");
+        StrUtils::remove(valStr, "()");
         char* nptr;
         toVal = fromVal = strtol(valStr.c_str(), &nptr, 10);
         if (*nptr == ',')
@@ -107,7 +107,7 @@ struct GenFltField : public GenFields {
  
     GenFltField(const GenSpecs& genSpec) : GenFields(genSpec) {
         std::string valStr = genSpec[3];
-        remove(valStr, "()");
+        StrUtils::remove(valStr, "()");
         char* nptr;
         toVal = fromVal = strtod(valStr.c_str(), &nptr);
         if (*nptr == ',')
@@ -134,7 +134,7 @@ struct GenStrField : public GenFields {
     std::string val;
     GenStrField(const GenSpecs& genSpec) : GenFields(genSpec) {
         val = genSpec[3];
-        remove(val, "()");
+        StrUtils::remove(val, "()");
         if (val.find(",") != std::string::npos) {
             val.resize(val.find(","));
         }

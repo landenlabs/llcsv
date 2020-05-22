@@ -59,7 +59,7 @@ public:
         val1(_val1),
         val2(_val2)
     {
-        remove(val1, "[]");
+        StrUtils::remove(val1, "[]");
         colNum = (unsigned)strtoul(val1.c_str(), nullptr, 10);
     }
     

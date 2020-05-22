@@ -112,18 +112,24 @@ int CsvCmds::init(CsvError& csvError) {
                     }
                 }
                 
-                if (rowValid) {
+                if (rowValid /* pipe->getRowData().csvRow.size() > 0 */) {
                     for (unsigned outIdx=0; outIdx < outCmds.size(); outIdx++) {
                         CsvOutput& output = *outCmds[outIdx];
                         output.writeRow(*this, *pipe);
                     }
                 }
                 
+                // SelectRows can return false.
                 for (actIter = actionCmds.begin();
                      !endInput && actIter != actionCmds.end();
                      actIter++) {
                     endInput =(*actIter)->end(*this, *pipe, pipe);
                 }
+            }
+            
+            for (unsigned outIdx=0; outIdx < outCmds.size(); outIdx++) {
+               CsvOutput& output = *outCmds[outIdx];
+               output.endInputFile(*this, inputs);
             }
         }
     }

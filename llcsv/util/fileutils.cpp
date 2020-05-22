@@ -82,7 +82,7 @@ bool FileMatches(const lstring& inName, const PatternList& patternList, bool emp
 }
 
 // ---------------------------------------------------------------------------
-const char* strfmt(
+void strfmt(
         std::vector<char>& buf,
         int width,
         const char* fmt,
@@ -94,8 +94,9 @@ const char* strfmt(
         buf.resize(orgSize + len+1);
         len = snprintf(buf.data()+orgSize, len+1, fmt, val);
     }
-    buf.resize(len);
-    return buf.data();
+    buf.resize(orgSize + len);
+    // buf.push_back('\0');
+    // return buf.data();
 }
 
 // ---------------------------------------------------------------------------
@@ -124,23 +125,23 @@ const char* getParts(
             fmt+=2;
             
             switch (c) {
-                case 's':
+                case 's':   // s=fullpath (path + name + ext)
                     strfmt(buf, width, itemFmt, filepath);
                     break;
-                case 'p':
+                case 'p':   //  p=path
                    strfmt(buf, width, itemFmt, Directory_files::parts(filepath, true, false, false).c_str());
                    break;
                 case 'r':   // relative path
                     strfmt(buf, width, itemFmt, Directory_files::parts(filepath, true, false, false)
                            .replaceStr(getCwd(), "").c_str());
                     break;
-                case 'n':
+                case 'n':   // n=name
                     strfmt(buf, width, itemFmt, Directory_files::parts(filepath, false, true, false).c_str());
                     break;
-                case 'e':
+                case 'e':   // e=extension
                     strfmt(buf, width, itemFmt, Directory_files::parts(filepath, false, false, true).c_str());
                     break;
-                case 'f':
+                case 'f':   // f=filename name+ext
                     strfmt(buf, width, itemFmt, Directory_files::parts(filepath, false, true, true).c_str());
                     break;
                 case '\0':
@@ -153,6 +154,7 @@ const char* getParts(
         }
     }
     
+    buf.push_back('\0');
     return buf.data();
 }
 
@@ -196,10 +198,15 @@ size_t FileUtils_sz::ScanFiles(const lstring& dirOrPattern)
     if (statResult != 0 || !S_ISDIR(filestat.st_mode)) {
         lstring patStr = Directory_files::parts(dirOrPattern, false, true, true);
         if (patStr.length() > 0) {
-            patStr.replaceStr(".", "[.]").replaceStr("*", ".*");
+            if (patStr.find("*") != std::string::npos) {
+                patStr.replaceStr(".", "[.]").replaceStr("*", ".*");
+            }
             includeFilePatList.push_back(std::regex(patStr));
         }
         dirname = Directory_files::parts(dirOrPattern, true, false, false);
+        if (dirname.empty()) {
+            dirname = getCwd();
+        }
     }
     
     Directory_files directory(dirname);

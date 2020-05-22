@@ -47,7 +47,7 @@ class ReplaceField {
 public:
     ReplaceField(const std::string& _name, const std::string& _fromPat, const std::string& _toText) {
         name = _name;
-        remove(name, "[]");
+        StrUtils::remove(name, "[]");
         colNum = (unsigned)strtoul(name.c_str(), nullptr, 10);
         fromPat = std::regex(_fromPat);
         toText = _toText;

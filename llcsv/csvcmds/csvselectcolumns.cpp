@@ -97,8 +97,8 @@ bool CsvSelectColunns::initNames(CsvCmds& csvCmds) {
             ArgList::iterator iter = args.begin();
             while (iter != args.end()) {
                std::string colName(*iter);
-                remove(colName, "[]");  // TODO - support partial match
-                bool skip = remove(colName, skipPat);
+                StrUtils::remove(colName, "[]");  // TODO - support partial match
+                bool skip = StrUtils::remove(colName, skipPat);
                 colNum = indexOf(pRowData->csvRow.getHeaders(), colName, colNum+1);
                if (colNum != NPOS || skip) {
                    // do {

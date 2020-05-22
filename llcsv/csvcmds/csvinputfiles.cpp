@@ -41,8 +41,6 @@ using namespace CsvTool;
 
 bool static USE_BIG_STACK_BUFFER = false;
 bool static USE_BIG_HEAP_BUFFER = false;
-static bool USE_CR_EOL  = false;
-static bool USE_KEEP_QUTOES = false;
 
 
 size_t onFile(const std::string& fullname, FileUtils_t& fileUtils) {
@@ -58,20 +56,19 @@ CsvInputFiles::CsvInputFiles(Order_t order) :
 bool CsvInputFiles::init(CsvCmds& csvCmds, CsvError& csvError) {
     nextArgIdx = nextFileIdx = fileIdx = 0;
     
-    // Parse and count rows
-    if ( USE_CR_EOL) {
-        csvParser.inEOL = '\r';
-    }
-    if ( USE_KEEP_QUTOES ) {
-        csvParser.keepQuotes = true;
-    }
-    
     ArgList::iterator iter = args.begin();
     while (iter != args.end()) {
         const std::string& arg = *iter;
+        size_t argLen = arg.length()-1;
         if (arg[0] == '-' || arg[0] == '#') {
             if (strcasecmp("header", arg.c_str()+1) == 0) {
                 hasHeader = true;
+            } else if (strncasecmp("tab-separator", arg.c_str()+1, argLen) == 0) {
+                csvParser.delim = '\t';
+            } else if (strncasecmp("quotes-keep", arg.c_str()+1, argLen) == 0) {
+                csvParser.keepQuotes = true;
+            }  else if (strncasecmp("cr-eol", arg.c_str()+1, argLen) == 0) {
+                csvParser.inEOL = '\r';
             }
             args.erase(iter);
         } else {
@@ -133,6 +130,7 @@ bool CsvInputFiles::nextFile(CsvError& csvError) {
             }
             std::cerr << "InputFile open " << file << std::endl;
         } else {
+            std::cerr << "InputFile - Failed to open  " << file << std::endl;
             csvError.append("InputFile - Failed to open ")
                 .append(file)
                 .append(" ").append(strerror(errno));

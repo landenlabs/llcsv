@@ -32,37 +32,62 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#pragma once
 
-#include "csvmodify.h"
+#include "csvoutputtranspose.h"
+#include "csvcmds.h"
 #include "csvtool.h"
-#include "fmtfields.h"
 
-// Format columns
-//
-// column:format(extra)...
-//
-// column = [name] or number, ex:[count] or 1
-// format = %w.pX
-//          Where X is s=string, f=float, d=decimal, x=hex
-// Example:
-//          [count]:3d(1),[name]:10s(1),[price]:5.2f(1)
-class CsvFormatColumns : public CsvModify {
-    
-    bool init(CsvCmds& csvCmds, CsvError& csvError) override;
-    size_t numFiles = 1;
-   
-    typedef  std::shared_ptr<FmtFields> ColItem;
-    typedef  std::vector<ColItem> RowFields;
-    std::vector<RowFields> fileFields;
- 
-public:
-    std::string getName() const override { return "FormatColumns"; }
-    
-    CsvFormatColumns(Order_t order);
-    
-    virtual
-    bool action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe)  override;
+#include <fstream>
+#include <filesystem>
+namespace fs = std::filesystem;
+#include <cstdio>
 
-};
+#define TMP_DIR "/tmp/";
 
+CsvOutputTranspose::CsvOutputTranspose(Order_t order) : CsvOutput(order) {
+}
+CsvOutputTranspose::~CsvOutputTranspose() {
+}
+
+bool CsvOutputTranspose::init(CsvCmds& csvCmds, CsvError& csvError) {
+    CsvOutput::init(csvCmds, csvError);
+    // outfilename = std::tmpnam(nullptr);
+    // outfilename = fs::temp_directory_path();
+    outfilename = TMP_DIR;
+    outfilename += getName() + std::to_string(order);
+  
+    return true;
+}
+
+bool CsvOutputTranspose::openOut() {
+   out.open(outfilename, std::ofstream::out);
+   if (out.fail()) {
+       int err = errno;
+       CsvCmds::CSV_ERROR.append("OutputFile - Failed to open for write ").append(strerror(err));
+       CsvCmds::CSV_ERROR.arg = outfilename;
+   }
+
+   return out.is_open();
+}
+
+std::ostream& CsvOutputTranspose::getOut() {
+    return out;
+}
+
+void CsvOutputTranspose::close() {
+    out.close();
+    std::remove(outfilename.c_str());
+}
+
+void CsvOutputTranspose::endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
+    openOut();
+    // write buffered data tranposed to tmp file.
+    close();
+}
+
+// TODO - remove this method
+bool CsvOutputTranspose::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
+    inRowData.push_back(inputs.getRowData());
+    // Store in local buffer to be transposed on endInputFile
+    return true; // CsvOutput::writeRow(csvCmds, inputs);
+}

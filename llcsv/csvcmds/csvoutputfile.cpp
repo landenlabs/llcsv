@@ -36,23 +36,47 @@
 #include "csvoutputfile.h"
 #include "csvcmds.h"
 #include "csvtool.h"
+#include "fileutils.h"
 
 #include <fstream>
 
 
 bool CsvOutputFile::init(CsvCmds& csvCmds, CsvError& csvError) {
     CsvOutput::init(csvCmds, csvError);
+    
     if (args.size() == 1) {
-        out.open(args[0], std::ofstream::out);
+        outFilename = args[0];
+    }
+    return (args.size() == 1) ? true : csvError.setFalse("OutputFile not set correctly ");
+}
+
+bool CsvOutputFile::open(CsvCmds& csvCmds) {
+    if (!out.is_open()) {
+        outFilename = getNextOutFilename(csvCmds);
+        out.open(outFilename, std::ofstream::out);  // defaults to appending ?
         if (out.fail()) {
             int err = errno;
-            csvError.append("OutputFile - Failed to open for write ").append(strerror(err));
-            csvError.arg = args[0];
+            CsvCmds::CSV_ERROR.append("OutputFile - Failed to open for write ").append(strerror(err));
+            CsvCmds::CSV_ERROR.arg = outFilename;
         }
-    } else {
-        csvError.append("OutputFile - Missing filename");
     }
+
     return out.is_open();
+}
+
+//
+// Get output filename, either provided "as is" or derived from the input file.
+// The following special formats will extract parts from the current input file.
+//    %s=fullpath,  %p=path, %n=name, %e=extension %f=filename name+ext
+//
+std::string& CsvOutputFile::getNextOutFilename(CsvCmds& csvCmds) {
+    nextOutFilename = outFilename;
+    CsvInputs* pInputs = csvCmds.findCmd<CsvInputs>(CsvCmd::ActionType::IN, FindFilter(order));
+    if (pInputs != nullptr && args[0].find( "%") != std::string::npos) {
+        std::vector<char> buf;
+        nextOutFilename = getParts(args[0].c_str(), pInputs->file.c_str(), buf);
+    }
+    return nextOutFilename;
 }
 
 std::ostream& CsvOutputFile::getOut() {
@@ -61,5 +85,14 @@ std::ostream& CsvOutputFile::getOut() {
 
 // TODO - remove this method
 bool CsvOutputFile::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
-    return CsvOutput::writeRow(csvCmds, inputs);
+    return open(csvCmds) && CsvOutput::writeRow(csvCmds, inputs);
+}
+
+void CsvOutputFile::endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
+    out.close();
+}
+
+void CsvOutputFile::close() {
+    out.close();
+    outFilename.clear();
 }

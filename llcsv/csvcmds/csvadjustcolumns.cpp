@@ -67,10 +67,6 @@ bool CsvAdjustColumns::init(CsvCmds& csvCmds, CsvError& cscvError) {
             const std::string& val1 = match[3];
             const std::string& val2 = match[4];
             
-            std::cout << "adjAction=" << adjAction
-                << " val1=" << val1
-                << " val2=" << val2
-                << std::endl;
             switch (adjAction[0]) {
                 case 'a': // append
                     if (strncasecmp("append", adjAction.c_str(), adjAction.length()) == 0) {

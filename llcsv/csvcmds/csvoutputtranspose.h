@@ -34,26 +34,27 @@
 
 #pragma once
 
-#include <string>
+#include "csvoutput.h"
 
-class CsvError {
+class CsvOutputTranspose : public CsvOutput {
+    
+    std::ofstream out;
+    std::string outfilename;
+    std::vector<CsvRowData> inRowData;
+    
+    bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
+    
+    bool openOut();
+    
 public:
-    std::string arg;
-    std::string msg;
+    std::string getName() const override { return "OutputTranspose"; }
     
-    bool setFalse(std::string _msg) {
-        msg = _msg;
-        return false;
-    }
+    CsvOutputTranspose(Order_t order);
+    virtual ~CsvOutputTranspose();
     
-    std::string& append(std::string _msg) {
-        if (msg.find(msg) == std::string::npos) {
-            if (!msg.empty()) {
-                msg += "\n";
-            }
-            msg += _msg;
-        }
-        return msg;
-    }
+    std::ostream& getOut() override;
+    void endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) override;
+    bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) override;
+    
+    void close() override;
 };
-
