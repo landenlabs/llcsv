@@ -106,7 +106,7 @@ int CsvCmds::init(CsvError& csvError) {
                     if (actItem.order > inOrder && actItem.order < endOrder) {
                         try {
                             rowValid = actItem.action(*this, *pipe, pipe);
-                        } catch (std::exception ex) {
+                        } catch (std::exception const& ex) {
                             std::cerr << actItem.getName() << " " << ex.what() << std::endl;
                         }
                     }
@@ -115,7 +115,12 @@ int CsvCmds::init(CsvError& csvError) {
                 if (rowValid /* pipe->getRowData().csvRow.size() > 0 */) {
                     for (unsigned outIdx=0; outIdx < outCmds.size(); outIdx++) {
                         CsvOutput& output = *outCmds[outIdx];
-                        output.writeRow(*this, *pipe);
+                        if (!output.writeRow(*this, *pipe)) {
+                            CsvCmds::CSV_ERROR.append(
+                                  output.getName(), output.getOutput(), " write error ",
+                                                      strerror(errno));
+                            errno = 0;
+                        }
                     }
                 }
                 

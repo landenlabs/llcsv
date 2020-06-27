@@ -190,7 +190,7 @@ size_t FileUtils_sz::ScanFiles(const lstring& dirOrPattern)
            fileCount += ScanFile(dirOrPattern);    // Regular file
         }
     }
-    catch (exception ex)  {
+    catch (std::exception const& ex)  {
        // Probably a pattern, let directory scan do its magic.
     }
 

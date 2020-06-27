@@ -93,8 +93,8 @@ bool CsvAdjustColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& p
         for (iter = adjustActions.cbegin(); iter != adjustActions.cend(); iter++) {
             (*iter)->adjust(rowData);
         }
-    } catch (std::exception ex) {
-        CsvCmds::CSV_ERROR.append(ex.what());
+    } catch (std::exception const& ex) {
+        CsvCmds::CSV_ERROR.append(getName(), ex);
         matched = false;
     }
     return matched;

@@ -55,7 +55,7 @@ bool CsvOutput::init(CsvCmds& csvCmds, CsvError& csvError) {
                 outEOL = '\r';
             } else {
                 ok = false;
-                csvError.append(getName() + " unknown argument " + arg);
+                csvError.append(getName(), "unknown argument", arg);
             }
             args.erase(iter);
         } else {
@@ -73,8 +73,7 @@ bool CsvOutput::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
         pInputs = &inputs;
         writeRow1(csvCmds, row.getHeaders());
     }
-    writeRow1(csvCmds, row);
-    return !getOut().fail();
+    return writeRow1(csvCmds, row);
 }
 
 bool CsvOutput::writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row) {
@@ -87,3 +86,8 @@ bool CsvOutput::writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row) {
     getOut() << CsvOutput::outEOL;
     return !getOut().fail();
 }
+
+void CsvOutput::endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
+    pInputs = nullptr;
+}
+

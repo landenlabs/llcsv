@@ -44,16 +44,17 @@ class CsvInputs;
 struct CsvRowData {
     CsvTool::CsvRow csvRow;
     size_t inRowCount;
+    static const unsigned NO_COL_NUM = 0;
     
     mutable
     const CsvInputs* pInputs;  
     
     const std::string& getColumn(const std::string& name, unsigned colNum) const {
-        return (colNum > 0) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
+        return (colNum > NO_COL_NUM) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
     }
     
     std::string& getColumn(const std::string& name, unsigned colNum)  {
-        return (colNum > 0) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
+        return (colNum > NO_COL_NUM) ? csvRow.at(colNum-1) : csvRow.getColumn(name);
     }
     
     void appendCol(const std::string& colName, size_t colNum, const char* val) {

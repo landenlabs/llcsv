@@ -43,6 +43,7 @@ class CsvOutputTable : public CsvOutput {
     
 public:
     std::string getName() const override { return "OutputTable"; }
+    std::string getOutput() const override { return "Table"; }
     
     CsvOutputTable(Order_t order) : CsvOutput(order)
     {

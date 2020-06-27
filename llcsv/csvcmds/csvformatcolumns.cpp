@@ -37,6 +37,7 @@
 #include "csvformatcolumns.h"
 #include "csvtool.h"
 using namespace CsvTool;
+#include "csvcmds.h"
 
 // static bool USE_CR_EOL  = false;
 // static bool USE_KEEP_QUTOES = false;
@@ -84,7 +85,7 @@ CsvFormatColumns::CsvFormatColumns(Order_t order) :
 bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
     numFiles = 1;
     fileFields.resize(numFiles);
-    std::vector<std::shared_ptr<FmtFields>>* pFields = &fileFields.back();
+    std::vector<std::shared_ptr<FmtField>>* pFields = &fileFields.back();
     FmtSpecs genSpec(4);
     
     const char* rxStr = "([#-][^,]+|([0-9+]+|\\[[^]]+]):([0-9.]*)([dsfx])(\\(.*\\)))";
@@ -131,7 +132,26 @@ bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
 }
 
 bool CsvFormatColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe) {
-    return true;
+    CsvRowData& rowData = inputs.getRowData();
+    RowFields::iterator iter;
+    bool okay = true;
+    unsigned fileIdx = 0;
+    FmtBuf buf;
+   
+    for (iter = fileFields[fileIdx].begin();  iter != fileFields[fileIdx].end(); iter++) {
+        try {
+            const FmtField& fmtField = *(*iter).get();
+            std::string& colStr = rowData.getColumn(fmtField.name, CsvRowData::NO_COL_NUM);
+            (*iter)->fmtValue(colStr, buf, colStr);
+         } catch (std::exception const& ex) {
+             // std::string exType = typeid(ex).name();
+             // CsvCmds::CSV_ERROR.append(getName()).appendTo(ex, false);
+             CsvCmds::CSV_ERROR.append(getName(), ex);
+             okay = false;
+         }
+    }
+    
+    return okay;
 }
 
 /*
@@ -180,7 +200,7 @@ void CsvGenerateColumns::fillRow(CsvRowData& rowData) {
         // [count]:3d(1,1000,2),[name]:10s(hello),[price]:5.2f(-123.45,123.45)
         try {
             fields[idx]->genValue(rowData.csvRow[idx], genBuf, idx, (unsigned)rowData.inRowCount);
-        } catch (std::exception ex) {
+        } catch (std::exception const& ex) {
             std::cerr << ex.what() << std::endl;
         }
     }

@@ -96,8 +96,8 @@ bool CsvMatchColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pi
         for (iter = matchFields.cbegin(); matched && iter != matchFields.cend(); iter++) {
             matched = (*iter)->match(rowData);
         }
-    } catch (std::exception ex) {
-        CsvCmds::CSV_ERROR.append(ex.what());
+    } catch (std::exception const& ex) {
+        CsvCmds::CSV_ERROR.append(getName(), ex);
         matched = false;
     }
     return matched;

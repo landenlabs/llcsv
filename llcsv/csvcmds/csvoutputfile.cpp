@@ -90,6 +90,7 @@ bool CsvOutputFile::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
 
 void CsvOutputFile::endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
     out.close();
+    CsvOutput::endInputFile(csvCmds, inputs);
 }
 
 void CsvOutputFile::close() {

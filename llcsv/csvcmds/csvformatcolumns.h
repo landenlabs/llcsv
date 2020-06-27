@@ -52,7 +52,7 @@ class CsvFormatColumns : public CsvModify {
     bool init(CsvCmds& csvCmds, CsvError& csvError) override;
     size_t numFiles = 1;
    
-    typedef  std::shared_ptr<FmtFields> ColItem;
+    typedef  std::shared_ptr<FmtField> ColItem;
     typedef  std::vector<ColItem> RowFields;
     std::vector<RowFields> fileFields;
  

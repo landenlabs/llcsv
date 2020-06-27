@@ -53,14 +53,14 @@ public:
     
 public:
     std::string getName() const = 0;
+    virtual std::string getOutput() const = 0;
     
     CsvOutput(Order_t order) : CsvFiles(order) {
         actionType = OUT;
     }
     
     virtual
-    void endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs) {
-    }
+    void endInputFile(CsvCmds& csvCmds, const CsvInputs& inputs);
     
     virtual
     bool writeRow(CsvCmds& csvCmds, const CsvInputs& inputs) = 0;

@@ -32,63 +32,14 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+ 
+#include "csvsortrowsbuffer.h"
+#include "csvcmds.h"
 
-#pragma once
+bool CsvSortRowsBuffer::init(CsvCmds& csvCmds, CsvError& cscvError) {
+    return true;
+}
 
-#include "csverror.h"
-#include <iostream>
-#include <regex>
-
-// Forward
-class CsvCmds;
-typedef unsigned int Order_t;
-const Order_t MAX_ORDER = -1;
-
-class CsvCmd {  // make abstract
-public:
-    typedef  std::vector<std::string>  ArgList;
-    ArgList args;
-    std::regex argRE;
-    std::smatch match;
-    std::string argREstr;
-    
-    enum ActionType { NONE, IN, SELECT, MODIFY, OUT };
-    ActionType actionType = NONE;
-    Order_t order = 0;
-    
-protected:
-    CsvCmd(Order_t _order) : order(_order) {
-        // 1,2-,-3,[hello],[a]-[b]
-        argREstr = "(([0-9+]+|\\[[^]]+])[,-]{0,1})+";
-        argRE = std::regex(argREstr, std::regex::extended);
-    }
-    virtual ~CsvCmd() {
-    };
-    
-public:
-    bool addArgs(const std::string& arg, CsvError& error) {
-        if (std::regex_match(arg, match, argRE)) {
-            if (match.length() == arg.length()) {
-                args.push_back(arg);
-                return true;
-            } else {
-                // TODO - show partial match.
-                // std::cerr << "unknown arg " << arg << std::endl;
-            }
-        }
-        // error.append("Invalid arguments", arg.c_str());
-        return false;
-    }
-    
-    std::string dump() {
-        std::string msg = getName();
-        for (size_t idx = 0; idx < args.size(); idx++) {
-            msg += "\n  " + args[idx];
-        }
-        return msg;
-    }
-   
-public:
-    virtual std::string getName() const = 0;
-    virtual bool init(CsvCmds& csvCmds, CsvError& csvError) = 0;
-};
+bool CsvSortRowsBuffer::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe) {
+    return true;
+}

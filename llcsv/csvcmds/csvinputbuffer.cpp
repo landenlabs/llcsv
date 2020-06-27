@@ -32,14 +32,47 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
- 
-#include "csvsortrowsbycolumnkeys.h"
-#include "csvcmds.h"
+#include <regex>
 
-bool CsvSortRowsByColumnKeys::init(CsvCmds& csvCmds, CsvError& cscvError) {
+#include "csvinputbuffer.h"
+#include "csvcmds.h"
+#include "csvselectrows.h"
+#include "csvtool.h"
+using namespace CsvTool;
+
+// static bool USE_CR_EOL  = false;
+// static bool USE_KEEP_QUTOES = false;
+
+
+bool CsvInputBuffer::init(CsvCmds& csvCmds, CsvError& csvError) {
+    pCsvCmds = &csvCmds;
+    nextFileIdx = fileIdx = 0;
+    numFiles = 1;
+    nextFileIdx = 0;
+    return fileIdx < numFiles; // TODO - support multiple files
+}
+
+
+bool CsvInputBuffer::nextFile(CsvError& csvError) {
+    
+    if (nextFileIdx < numFiles) {
+        fileIdx = nextFileIdx++;
+        file = "gen.csv";
+        
+        // TODO - isParallel keep all rows, else only keep one row
+        // rowData.resize(nextFileIdx+1);
+        return true;
+    }
+    
+    return false;
+}
+
+bool CsvInputBuffer::nextRow() {
+    rowData[fileIdx].inRowCount++;
+    fillRow(rowData[fileIdx]);
     return true;
 }
 
-bool CsvSortRowsByColumnKeys::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& pipe) {
-    return true;
+void CsvInputBuffer::fillRow(CsvRowData& rowData) {
+
 }

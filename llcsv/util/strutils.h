@@ -82,7 +82,11 @@ std::string& removeWrapper(std::string& str, const char* find) {
     return str;
 }
 
-
+inline
+std::string& replaceAll(std::string& inOutStr, std::regex& findRx, const char* toStr) {
+    inOutStr =  std::regex_replace(inOutStr, findRx, toStr); //, std::regex_constants::format_first_only);
+    return inOutStr;
+}
 
 inline
 std::string& toUpper(std::string& inOut) {
@@ -103,7 +107,7 @@ std::string& toCapitalize(std::string& inOut) {
     bool isWord = true;
     for (size_t idx = 0; idx < inOut.length(); idx++) {
         char& c = inOut[idx];
-        c = isWord ? tolower(c) : tolower(c);
+        c = isWord ? toupper(c) : tolower(c);
         isWord = isspace(c);
     }
     return inOut;

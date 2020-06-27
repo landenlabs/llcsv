@@ -35,25 +35,75 @@
 #pragma once
 
 #include <string>
+#include <regex>
+#include <sstream>
+
 
 class CsvError {
 public:
     std::string arg;
     std::string msg;
     
-    bool setFalse(std::string _msg) {
+    bool setFalse(const std::string& _msg) {
         msg = _msg;
         return false;
     }
     
-    std::string& append(std::string _msg) {
-        if (msg.find(msg) == std::string::npos) {
-            if (!msg.empty()) {
-                msg += "\n";
+    CsvError& append(const char* _msg)
+    {
+        if (_msg != nullptr && *_msg != '\0') {
+            if (msg.find(_msg) == std::string::npos) {
+                if (!msg.empty()) {
+                    msg += "\n";
+                }
+                msg += _msg;
             }
-            msg += _msg;
+        }
+        return *this;
+    }
+
+    CsvError& append(const std::string _msg ) {
+       return append(_msg.c_str());
+    }
+    
+    std::string stringer(const std::exception& ex) {
+        std::regex fromPat(".*[0-9]([a-z_]+).*");
+        std::string errType = typeid(ex).name();
+        errType = std::regex_replace(errType, fromPat, " $1 ", std::regex_constants::format_first_only);
+        errType = std::regex_replace(errType, std::regex("_"), " ");
+        std::string msg = errType + ex.what();
+        try {
+            std::rethrow_if_nested(ex);
+        } catch (const std::exception& nested) {
+            msg += stringer(nested);
         }
         return msg;
     }
+    
+    template<typename TT>
+    std::string stringer(const TT& value)
+    {
+        std::ostringstream oss;
+        oss << value;
+        return oss.str();
+    }
+
+    template<typename TT, typename ... Args >
+    std::string stringer(const TT& value, const Args& ... args)
+    {
+        return stringer(value) + " " + stringer(args...);
+    }
+    
+    template<typename TT, typename... Args>
+    CsvError& append(TT _msg, const Args& ... args) {
+        std::string msg = stringer(_msg, args...);
+        return append(msg.c_str());
+    }
 };
 
+struct invalid_column: public std::range_error
+{
+    invalid_column(const std::string& what) : range_error(what) {}
+    invalid_column(const char* what) : range_error(what) {}
+    // InvalidColumn_error(const char* what) : range_error(std::string("Invalid column ") + what)   { }
+};

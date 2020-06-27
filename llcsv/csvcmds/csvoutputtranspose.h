@@ -48,6 +48,7 @@ class CsvOutputTranspose : public CsvOutput {
     
 public:
     std::string getName() const override { return "OutputTranspose"; }
+    std::string getOutput() const override { return outfilename; }
     
     CsvOutputTranspose(Order_t order);
     virtual ~CsvOutputTranspose();

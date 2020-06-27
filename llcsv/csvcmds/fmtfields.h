@@ -41,12 +41,12 @@
 typedef  std::vector<char>  FmtBuf;
 typedef  std::vector<std::string> FmtSpecs; // 0=name,1=width, 2=fmt,3=value
 
-struct FmtFields {
+struct FmtField {
     std::string name;
     int width;
     std::string widthStr;
     std::string fmt;
-    FmtFields(const FmtSpecs& fmtSpec) {
+    FmtField(const FmtSpecs& fmtSpec) {
         name = fmtSpec[0];
         StrUtils::remove(name, "[]");
         widthStr = fmtSpec[1];
@@ -57,8 +57,10 @@ struct FmtFields {
     virtual
     std::string fmtValue(std::string& outVal, FmtBuf& buf, const std::string& inVal) = 0;
 };
-struct FmtDecField : public FmtFields {
-    FmtDecField(const FmtSpecs& fmtSpec) : FmtFields(fmtSpec) {
+struct FmtDecField : public FmtField {
+    FmtDecField(const FmtSpecs& fmtSpec) : FmtField(fmtSpec) {
+        if (width == 0)
+            width = 10;
     }
     std::string fmtValue(std::string& outVal, FmtBuf& buf, const std::string& inVal) override {
         buf.resize(std::max(buf.size(), (size_t)width+1));
@@ -70,9 +72,11 @@ struct FmtDecField : public FmtFields {
     }
 };
 
-struct FmtFltField : public FmtFields {
+struct FmtFltField : public FmtField {
  
-    FmtFltField(const FmtSpecs& fmtSpec) : FmtFields(fmtSpec) {
+    FmtFltField(const FmtSpecs& fmtSpec) : FmtField(fmtSpec) {
+        if (width == 0)
+            width = 10;
     }
     std::string fmtValue(std::string& outVal, FmtBuf& buf, const std::string& inVal) override {
         buf.resize(std::max(buf.size(), (size_t)width+1));
@@ -85,7 +89,7 @@ struct FmtFltField : public FmtFields {
 };
  
 
-struct FmtStrField : public FmtFields {
+struct FmtStrField : public FmtField {
     lstring val;
     bool haveExtra = false;
     bool trim = false;
@@ -93,7 +97,7 @@ struct FmtStrField : public FmtFields {
     char caseChg = 'n';
     const char* QUOTE = "\"";
     
-    FmtStrField(const FmtSpecs& fmtSpec) : FmtFields(fmtSpec) {
+    FmtStrField(const FmtSpecs& fmtSpec) : FmtField(fmtSpec) {
         val = fmtSpec[3];
         StrUtils::remove(val, "()");
         unsigned pos = 0;
@@ -126,15 +130,10 @@ struct FmtStrField : public FmtFields {
     
 
     std::string fmtValue(std::string& outVal, FmtBuf& buf, const std::string& inVal) override {
-        outVal.assign(val);
         if (haveExtra) {
             lstring tmpVal = outVal;
             if (trim) {
                 tmpVal.trim();
-            }
-            if (quote) {
-                tmpVal.insert(0, QUOTE);
-                tmpVal.append(QUOTE);
             }
             if (caseChg != 'n') {
                 switch (caseChg) {
@@ -148,6 +147,13 @@ struct FmtStrField : public FmtFields {
                         StrUtils::toLower(tmpVal);
                         break;
                 }
+            }
+            if (width != 0) {
+                tmpVal.resize(width, ' ' );
+            }
+            if (quote) {
+                tmpVal.insert(0, QUOTE);
+                tmpVal.append(QUOTE);
             }
             outVal = tmpVal;
         }

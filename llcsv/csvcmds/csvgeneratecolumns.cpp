@@ -158,7 +158,7 @@ void CsvGenerateColumns::fillRow(CsvRowData& rowData) {
         // [count]:3d(1,1000,2),[name]:10s(hello),[price]:5.2f(-123.45,123.45)
         try {
             fields[idx]->genValue(rowData.csvRow[idx], genBuf, idx, (unsigned)rowData.inRowCount);
-        } catch (std::exception ex) {
+        } catch (std::exception const& ex) {
             std::cerr << ex.what() << std::endl;
         }
     }

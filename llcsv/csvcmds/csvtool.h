@@ -132,7 +132,13 @@ public:
     std::string& getColumn(const std::string& colName)  {
         // std::find(headers.begin(), headers.end(), colName);
         // int index = std::distance(vecOfNums.begin(), it);
-        return at(0);
+        try {
+            return at(headers.index(colName));
+        }  catch(...) {
+            // std::throw_with_nested( std::range_error(colName) );
+            // throw std::range_error(colName);
+            throw invalid_column(colName);
+        }
     }
     
     void setHeaders() {

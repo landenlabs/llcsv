@@ -37,13 +37,13 @@
 #include "csvmodify.h"
 #include "csvtool.h"
 
-class CsvSortRowsByColumnKeys : public CsvModify {
+class CsvSortRowsBuffer : public CsvModify {
     
      bool init(CsvCmds& csvCmds, CsvError& cscvError) override;
     
 public:
     std::string getName() const override { return "SortRows"; }
-    CsvSortRowsByColumnKeys(Order_t order) : CsvModify(order) {
+    CsvSortRowsBuffer(Order_t order) : CsvModify(order) {
     }
     
     bool action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& pipe) override;

@@ -50,7 +50,11 @@
 // #include "util/filters.h"
 
 #include "csvcmds/csvcmds.h"
+
 #include "csvcmds/csvinputfiles.h"
+#include "csvcmds/csvinputbuffer.h"
+#include "csvcmds/csvgeneratecolumns.h"
+
 #include "csvcmds/csvoutputfile.h"
 #include "csvcmds/csvoutputtable.h"
 #include "csvcmds/csvoutputtranspose.h"
@@ -67,8 +71,8 @@
 #include "csvcmds/csvadjustcolumns.h"
 #include "csvcmds/csvreplacecolumns.h"
 
-#include "csvcmds/csvsortrowsbycolumnkeys.h"
-#include "csvcmds/csvgeneratecolumns.h"
+#include "csvcmds/csvsortrowsbuffer.h"
+
 
 #include <vector>
 #include <map>
@@ -298,7 +302,13 @@ int main(int argc, char* argv[])
                         
                     case 's':
                         if ((okay = ValidOption("sort", argStr))) {
-                             csvCmds.push_back(std::make_shared<CsvSortRowsByColumnKeys>(order++));
+                            std::shared_ptr<CsvSortRowsBuffer> pSortBuffer =
+                                std::make_shared<CsvSortRowsBuffer>(order++);
+                            csvCmds.push_back(pSortBuffer);
+                            std::shared_ptr<CsvInputBuffer> pSortInput =
+                                std::make_shared<CsvInputBuffer>(order++);
+                            pSortInput->setBuffer(pSortBuffer);
+                            csvCmds.push_back(pSortInput);
                             continue;
                         }
                         break;
@@ -337,11 +347,11 @@ int main(int argc, char* argv[])
             result = csvCmds.init(CsvCmds::CSV_ERROR);
         }
         
-        if (result == -1) {
+        // if (result == -1) {
             std::cerr << CsvCmds::CSV_ERROR.msg
                 << " " << CsvCmds::CSV_ERROR.arg
                 << std::endl;
-        }
+        // }
     }
 
     return result;

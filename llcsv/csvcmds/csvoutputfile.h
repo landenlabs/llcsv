@@ -47,6 +47,7 @@ class CsvOutputFile : public CsvOutput {
     
 public:
     std::string getName() const override { return "OutputFile"; }
+    std::string getOutput() const override { return outFilename; }
     
     CsvOutputFile(Order_t order) : CsvOutput(order)
     {

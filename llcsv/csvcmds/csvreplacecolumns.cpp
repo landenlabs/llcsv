@@ -71,8 +71,8 @@ bool CsvReplaceColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& 
         for (iter = replaceFields.cbegin(); iter != replaceFields.cend(); iter++) {
             (*iter)->replace(rowData);
         }
-    } catch (std::exception ex) {
-        CsvCmds::CSV_ERROR.append(ex.what());
+    } catch (std::exception const& ex) {
+        CsvCmds::CSV_ERROR.append(getName(), ex);
         matched = false;
     }
     return matched;
