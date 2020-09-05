@@ -46,7 +46,7 @@ class CsvInputPipe : public CsvInputs {
     std::string getName() const override { return "InputPipe"; }
     
 public:
-    size_t nextFileIdx;
+    size_t nextFileIdx = 0;
     
 public:
     CsvInputPipe(Order_t order);

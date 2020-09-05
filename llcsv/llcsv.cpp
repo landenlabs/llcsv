@@ -150,7 +150,7 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 
 // ---------------------------------------------------------------------------
 void help() {
-    cerr << "  Dennis Lang v1.1 (LandenLabs.com) " __DATE__ << "\n"
+    cerr << "  Dennis Lang v1.2 (LandenLabs.com) " __DATE__ << "\n"
          << "\nDes: CSV manipulator command line tool\n"
          "Use: llcsv [actions] ...\n"
          "  General pipeline   input selection modify output"

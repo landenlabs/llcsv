@@ -140,6 +140,7 @@ bool CsvSelectColunns::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& 
         outPipe.nextFile(CsvCmds::CSV_ERROR);
         copySelectColumns(outPipe.getRowData().csvRow.getHeaders(), pRowData->csvRow.getHeaders());
     }
+
     copySelectColumns(outPipe.getRowData().csvRow, pRowData->csvRow);
     outPipe.setRowNum(inputs.getRowNum());
     pipe = &outPipe;
@@ -154,7 +155,7 @@ bool CsvSelectColunns::copySelectColumns(CsvTool::CsvCells& outCells, const CsvT
     for (iter = colRanges.cbegin(); iter != colRanges.cend(); iter++) {
         const ColRange& colRange = *iter;
         for (ColIdx_t colIdx = colRange.from; colIdx <= colRange.to; colIdx++) {
-            outCells.push_back(inCells[colIdx]);
+            outCells.push_back(inCells.at(colIdx, EMPTY));
         }
     }
 

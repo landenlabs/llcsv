@@ -40,7 +40,7 @@
 class CsvFiles : public CsvCmd {
 protected:
     CsvFiles(Order_t order) : CsvCmd(order) {
-        argREstr = "^([^.]+[./\\\\].+|@.+|[#-][a-z]+|-)$";
+        argREstr = "^([^.]+[./\\\\].+|@.+|[#-][a-z]+[a-zA-Z_-]*(=.*|)|-)$";
         argRE = std::regex(argREstr);
     }
     virtual ~CsvFiles() = default; // to silence -Wall warnings

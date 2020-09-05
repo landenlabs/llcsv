@@ -53,7 +53,7 @@ class CsvInputs : public CsvFiles {
 public:
     std::vector<CsvRowData> rowData;
     bool parallel = false;  // Read all files in parallel
-    size_t fileIdx;
+    size_t fileIdx = 0;
     std::string file;
     
 public:
@@ -67,11 +67,11 @@ public:
     }
     
     const CsvRowData& getRowData() const  {
-         rowData[fileIdx].pInputs = (CsvInputs*)this;
+         rowData[fileIdx].pInputs = this;
         return rowData[fileIdx];
     }
     CsvRowData& getRowData()  {
-         rowData[fileIdx].pInputs = this;
+        rowData[fileIdx].pInputs = this;
         return rowData[fileIdx];
     }
     size_t getRowNum() const {

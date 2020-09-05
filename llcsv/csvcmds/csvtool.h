@@ -95,13 +95,29 @@ typedef IBuffer CsvStream;
 typedef std::ifstream CsvStream;
 #endif
 
-typedef std::vector<std::string> CsvCells;
+// typedef std::vector<std::string> CsvCells;
+class CsvCells : public std::vector<std::string> {
+public:
+    CsvCells() = default;
+    CsvCells(size_t initSize) : vector(initSize) {
+    }
+    
+    using vector::at;
+
+    const std::string& at(size_t idx, const std::string& def) const {
+        return (idx < size()) ? vector::at(idx) : def;
+    }
+    std::string& at(size_t idx, std::string& def) {
+        return (idx < size()) ? vector::at(idx) : def;
+    }
+};
+
 
 class CsvHeaders : public CsvCells {
 public:
     CsvHeaders() = default;
     // CsvHeaders(const CsvHeaders& other) = default;
-    CsvHeaders(size_t initSize) : vector(initSize) {
+    CsvHeaders(size_t initSize) : CsvCells(initSize) {
     }
     CsvHeaders& operator=(const CsvHeaders& other) {
         vector::operator=(other);
@@ -124,16 +140,17 @@ class CsvRow : public CsvRowColumns {
     
     unsigned rowIdx; // 1...n
     CsvHeaders headers;
+    std::string EMPTY;
     
 public:
     const std::string& getColumn(const std::string& colName) const {
-        return at(headers.index(colName));
+        return at(headers.index(colName), EMPTY);
     }
     std::string& getColumn(const std::string& colName)  {
         // std::find(headers.begin(), headers.end(), colName);
         // int index = std::distance(vecOfNums.begin(), it);
         try {
-            return at(headers.index(colName));
+            return at(headers.index(colName), EMPTY);
         }  catch(...) {
             // std::throw_with_nested( std::range_error(colName) );
             // throw std::range_error(colName);

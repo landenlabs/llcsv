@@ -51,8 +51,14 @@ bool CsvOutput::init(CsvCmds& csvCmds, CsvError& csvError) {
                 outHeaders = false;
             } else if (strncasecmp("tab-separator", arg.c_str()+1, argLen) == 0) {
                 outDelim = '\t';
+            } else if (strcasecmp("separator=", arg.c_str()+1) == 0) {
+                outDelim = arg[11];
             }  else if (strncasecmp("cr-eol", arg.c_str()+1, argLen) == 0) {
                 outEOL = '\r';
+            } else if (strncasecmp("auto-quotes", arg.c_str()+1, argLen) == 0) {
+                outQuotes = AUTO;
+            } else if (strncasecmp("quotes", arg.c_str()+1, argLen) == 0) {
+                outQuotes = ALWAYS;
             } else {
                 ok = false;
                 csvError.append(getName(), "unknown argument", arg);
@@ -76,11 +82,37 @@ bool CsvOutput::writeRow(CsvCmds& csvCmds, const CsvInputs& inputs)  {
     return writeRow1(csvCmds, row);
 }
 
+
+template<>
+bool CsvOutput::needsQuotes <std::string>(const std::string& value) {
+    std::regex patNeedQuotes("[,\n\r]");    // , std::regex::extended)
+    // std::regex patHasQuotes("[\"]");
+ 
+    return (std::regex_search(value, patNeedQuotes));
+    // return value.find(",") != std::string::npos;
+}
+
+
+template <typename TT>
+std::string CsvOutput::quote(const TT& value) {
+    switch (outQuotes) {
+        case NONE:
+            return value;
+            break;
+        case ALWAYS:
+             return withQuotes(value);
+            break;
+        default:
+        case AUTO:
+            return autoQuotes(value);
+    }
+}
+
 bool CsvOutput::writeRow1(CsvCmds& csvCmds, const CsvTool::CsvRowColumns& row) {
     bool sep = false;
-    for (auto &col : row) {
+    for (const auto &col : row) {
        if (sep) getOut() << outDelim;
-       getOut() << col;
+       getOut() << quote(col);
        sep = true;
     }
     getOut() << CsvOutput::outEOL;

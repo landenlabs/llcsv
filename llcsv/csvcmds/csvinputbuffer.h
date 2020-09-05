@@ -51,7 +51,7 @@ class CsvInputBuffer : public CsvInputs {
     CsvItem buffer;
  
 public:
-    size_t nextFileIdx;
+    size_t nextFileIdx = 0;
 
     bool parallel = false;  // Read all files in parallel
     

@@ -51,6 +51,33 @@ public:
     char outEOL = '\n';
     char outDelim = ',';
     
+    enum Quotes { NONE, ALWAYS, AUTO };
+    Quotes outQuotes = NONE;
+    std::string QUOTE = "\"";
+    
+    template <typename TT>
+    std::string withQuotes(TT& col) {
+        return QUOTE + col + QUOTE;
+    }
+    template <typename TT>
+    std::string autoQuotes(TT& col) {
+        if (needsQuotes(col))  
+            return withQuotes(col);
+        else
+            return col;
+    }
+    template <typename TT>
+    std::string noQuotes(TT& col) {
+        return col;
+    }
+    
+    template <typename TT>
+    std::string quote(const TT& value);
+        
+    template <typename TT>
+    bool needsQuotes(const TT& value);
+     
+    
 public:
     std::string getName() const = 0;
     virtual std::string getOutput() const = 0;

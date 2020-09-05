@@ -58,7 +58,7 @@ class CsvInputFiles : public CsvInputs {
     
 public:
     std::vector<CsvTool::CsvStream> inFsList;
-    size_t nextFileIdx;
+    size_t nextFileIdx = 0;
     FileUtils_t fileUtils;
     
 public:

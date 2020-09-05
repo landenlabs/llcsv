@@ -37,18 +37,23 @@
 
 #include <algorithm>
 #include "strutils.h"
+#include "split.h"
 
 typedef  std::vector<char>  FmtBuf;
 typedef  std::vector<std::string> FmtSpecs; // 0=name,1=width, 2=fmt,3=value
 
 struct FmtField {
-    std::string name;
+    std::string colName;
+    int colNum = CsvRowData::NO_COL_NUM;
     int width;
     std::string widthStr;
     std::string fmt;
+   
+    
     FmtField(const FmtSpecs& fmtSpec) {
-        name = fmtSpec[0];
-        StrUtils::remove(name, "[]");
+        colName = fmtSpec[0];
+        StrUtils::remove(colName, "[]");
+        colNum = atoi(colName.c_str());
         widthStr = fmtSpec[1];
         width = atoi(widthStr.c_str());
         fmt = "%" + widthStr + fmtSpec[2];
@@ -91,6 +96,7 @@ struct FmtFltField : public FmtField {
 
 struct FmtStrField : public FmtField {
     lstring val;
+    lstring fmt;
     bool haveExtra = false;
     bool trim = false;
     bool quote = false;
@@ -100,30 +106,34 @@ struct FmtStrField : public FmtField {
     FmtStrField(const FmtSpecs& fmtSpec) : FmtField(fmtSpec) {
         val = fmtSpec[3];
         StrUtils::remove(val, "()");
-        unsigned pos = 0;
-        while  (pos < val.length()) {
-            switch (tolower(val[pos])) {
-                case 't':   // trim
-                    trim = strncasecmp("trim", val, val.length());
-                    break;
-                case 'q':   // quote
-                    quote = strncasecmp("quote", val, val.length());
-                    break;
-                case 'c':   // capitialize
-                    caseChg = strncasecmp("capitialize", val, val.length()) ? 'c':'n';
-                    break;
-                case 'u':   // uppercase
-                    caseChg = strncasecmp("uppercase", val, val.length()) ? 'u':'n';
-                    break;
-                case 'l':   // lowercase
-                    caseChg = strncasecmp("lowercase", val, val.length()) ? 'l':'n';
-                    break;
-                default:
-                    std::cerr << "Unknown format extra="<< val << std::endl;
-                    break;
+        Split parts(val, ",");
+        
+        for (lstring part : parts) {
+            if (part.find("%") != lstring::npos) {
+                fmt = part;
+            } else {
+                switch (tolower(part[0])) {
+                    case 't':   // trim
+                        trim = strncasecmp("trim", part, part.length());
+                        break;
+                    case 'q':   // quote
+                        quote = strncasecmp("quote", part, part.length());
+                        break;
+                    case 'c':   // capitialize
+                        caseChg = strncasecmp("capitialize", part, part.length()) ? 'c':'n';
+                        break;
+                    case 'u':   // uppercase
+                        caseChg = strncasecmp("uppercase", part, part.length()) ? 'u':'n';
+                        break;
+                    case 'l':   // lowercase
+                        caseChg = strncasecmp("lowercase", part, part.length()) ? 'l':'n';
+                        break;
+                    default:
+                        std::cerr << "Unknown format extra="<< part << std::endl;
+                        break;
+                }
             }
-            size_t xpos = val.find(",", pos);
-            pos = (unsigned)((xpos == std::string::npos) ? -1: xpos+1);
+
             haveExtra = true;
         }
     }
@@ -147,6 +157,12 @@ struct FmtStrField : public FmtField {
                         StrUtils::toLower(tmpVal);
                         break;
                 }
+            }
+            if (fmt.length() > 0) {
+                size_t bufLen = (width > 0) ? width : (fmt.length() + tmpVal.length());
+                buf.resize(std::max(buf.size(), bufLen+1));
+                snprintf(buf.data(), buf.size(), fmt, tmpVal.c_str());
+                tmpVal = buf.data();
             }
             if (width != 0) {
                 tmpVal.resize(width, ' ' );

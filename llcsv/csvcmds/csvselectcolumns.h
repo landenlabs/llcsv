@@ -53,6 +53,7 @@ protected:
     ColIdx_t minCol = 0;
     ColIdx_t maxCol = -1;
     CsvInputPipe outPipe;
+    std::string EMPTY;
     
     bool copySelectColumns(CsvTool::CsvCells& outCells, const CsvTool::CsvCells& inCells);
     

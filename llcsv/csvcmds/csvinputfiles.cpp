@@ -97,6 +97,8 @@ bool CsvInputFiles::getNextFileName()  {
 }
     
 bool CsvInputFiles::nextFile(CsvError& csvError) {
+    std::cerr << "Inpfiles::nextFile fileIdx=" << fileIdx << " of " << inFsList.size() << std::endl;
+    
     if (!parallel && fileIdx < inFsList.size()) {
         CsvTool::CsvStream& inFS = inFsList[fileIdx];
         inFS.close();

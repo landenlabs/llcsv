@@ -86,7 +86,7 @@ bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
     numFiles = 1;
     fileFields.resize(numFiles);
     std::vector<std::shared_ptr<FmtField>>* pFields = &fileFields.back();
-    FmtSpecs genSpec(4);
+    FmtSpecs genSpec(4);  // 0=colName|number, 1=width, 2=tpye, 3=value|action
     
     const char* rxStr = "([#-][^,]+|([0-9+]+|\\[[^]]+]):([0-9.]*)([dsfx])(\\(.*\\)))";
     std::regex rx = std::regex(rxStr, std::regex::extended);
@@ -99,7 +99,7 @@ bool CsvFormatColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
             size_t mlen = match.size();
             if (mlen >= 6 && match[5].length() > 0) {
                
-                const std::string& colname = genSpec[0] = match[2];
+                const std::string& colName = genSpec[0] = match[2];
                 const std::string& widthStr = genSpec[1] = match[3];
                 const std::string& fieldTyp = genSpec[2] = match[4];
                 const std::string& value = genSpec[3] = match[5];
@@ -141,7 +141,7 @@ bool CsvFormatColumns::action(CsvCmds& csvCmds, CsvInputs& inputs, CsvInputs*& p
     for (iter = fileFields[fileIdx].begin();  iter != fileFields[fileIdx].end(); iter++) {
         try {
             const FmtField& fmtField = *(*iter).get();
-            std::string& colStr = rowData.getColumn(fmtField.name, CsvRowData::NO_COL_NUM);
+            std::string& colStr = rowData.getColumn(fmtField.colName, fmtField.colNum);
             (*iter)->fmtValue(colStr, buf, colStr);
          } catch (std::exception const& ex) {
              // std::string exType = typeid(ex).name();
