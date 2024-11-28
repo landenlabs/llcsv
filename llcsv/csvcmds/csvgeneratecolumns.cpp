@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -92,6 +92,7 @@ bool CsvGenerateColumns::init(CsvCmds& csvCmds, CsvError& csvError) {
                         pFields->push_back(std::make_shared<GenRowField>(genSpec));
                         break;
                     case 'n':   // input name
+                        pFields->push_back(std::make_shared<GenStrField>(genSpec));
                         break;
                 }
             } else {

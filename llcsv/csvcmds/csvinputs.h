@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -55,7 +55,8 @@ public:
     bool parallel = false;  // Read all files in parallel
     size_t fileIdx = 0;
     std::string file;
-    
+    std::string MISSING_COLUMN;
+
 public:
     CsvInputs(Order_t order) : CsvFiles(order) {
         actionType = IN;

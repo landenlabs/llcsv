@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -55,7 +55,8 @@ CsvInputFiles::CsvInputFiles(Order_t order) :
 
 bool CsvInputFiles::init(CsvCmds& csvCmds, CsvError& csvError) {
     nextArgIdx = nextFileIdx = fileIdx = 0;
-    
+
+
     ArgList::iterator iter = args.begin();
     while (iter != args.end()) {
         const std::string& arg = *iter;
@@ -75,6 +76,7 @@ bool CsvInputFiles::init(CsvCmds& csvCmds, CsvError& csvError) {
             iter++;
         }
     }
+
     return args.size() > 0 ? true : csvError.setFalse("InputFile - missing filename");
 }
 
@@ -82,7 +84,10 @@ bool CsvInputFiles::getNextFileName()  {
     // TODO - iterate on FileUtil to get filenames
     if (nextArgIdx < args.size()) {
         file = args[nextArgIdx++];
+        std::cerr << "Inpfiles::getNextFileName arg=" << file << std::endl;
+
         fileUtils.ScanFiles(file);   // TODO - use thread
+        std::cerr << "Inpfiles::getNextFileName nextArgIdx=" << nextArgIdx << " of " << args.size() << " found=" << fileUtils.fileDirList.size() << std::endl;
     }
     if (fileUtils.fileDirList.empty()) {
         return false;
@@ -143,15 +148,16 @@ bool CsvInputFiles::nextFile(CsvError& csvError) {
 }
 
 bool CsvInputFiles::nextRow() {
-    bool okay;
+    bool anyOkay = false;
     do {
         CsvTool::CsvStream& inFS = inFsList[fileIdx];
         rowData[fileIdx].csvRow.clear();
-        okay = csvParser.getRow(inFS, field, rowData[fileIdx].csvRow);
+        bool okay = csvParser.getRow(inFS, field, rowData[fileIdx].csvRow);
+        anyOkay |= okay;
         if (okay)
             rowData[fileIdx].inRowCount++;
     } while (parallel && nextFile(CsvCmds::CSV_ERROR));
-    if (parallel)
+    if (parallel && anyOkay)
         fileIdx = 0;
-    return okay;
+    return anyOkay;
 }

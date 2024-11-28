@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -97,8 +97,8 @@ int CsvCmds::init(CsvError& csvError) {
     
         while (inputs.nextFile(csvError)) {
             bool endInput = false;
-            while (!endInput && inputs.nextRow()) {
-                bool rowValid = true;
+            bool rowValid = false;
+            while (!endInput && (rowValid = inputs.nextRow())) {
                 CsvInputs* pipe = &inputs;
                 actIter = actionCmds.begin();
                 while (rowValid && actIter != actionCmds.end()) {
@@ -132,6 +132,8 @@ int CsvCmds::init(CsvError& csvError) {
                 }
             }
             
+            endInput |= !rowValid;
+
             for (unsigned outIdx=0; outIdx < outCmds.size(); outIdx++) {
                CsvOutput& output = *outCmds[outIdx];
                output.endInputFile(*this, inputs);

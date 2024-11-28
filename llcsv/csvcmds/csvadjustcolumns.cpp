@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -37,6 +37,11 @@
 #include "csvcmds.h"
 #include "fileutils.h"
 
+/*
+ *
+ *   This does not work - the file name is blank by the time method is called. !!!
+ *
+ */
 class AdjustAppendFilename : public AdjustAction {
     std::vector<char> buf;
 public:

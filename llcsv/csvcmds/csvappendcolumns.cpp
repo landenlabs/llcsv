@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------------------
 //
 // Author: Dennis Lang - 2020
-// http://landenlabs.com/
+// https://landenlabs.com/
 //
 // This file is part of llcsv project.
 //
@@ -54,8 +54,10 @@ bool CsvAppendColumns::action(CsvCmds& csvCmds,  CsvInputs& inputs, CsvInputs*& 
     if (pNextRowData != pRowData) {
         pRowData = pNextRowData;
         okay = initNames(csvCmds);
-        for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
-            appendColumns(outRow.getHeaders(), inputs.getParallelData(fileIdx).csvRow.getHeaders());
+        if (inputs.hasHeader) {
+            for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
+                appendColumns(outRow.getHeaders(), inputs.getParallelData(fileIdx).csvRow.getHeaders());
+            }
         }
     }
     for (unsigned fileIdx = 0; fileIdx < inputs.getParallelCnt(); fileIdx++) {
@@ -74,7 +76,9 @@ bool CsvAppendColumns::appendColumns(CsvTool::CsvCells& outCells, const CsvTool:
         for (iter = colRanges.cbegin(); iter != colRanges.cend(); iter++) {
             const ColRange& colRange = *iter;
             for (ColIdx_t colIdx = colRange.from; colIdx <= colRange.to; colIdx++) {
-                outCells.push_back(inCells[colIdx]);
+
+                // TODO - use MISSING_COLUMN, but not in class hierarchy
+                outCells.push_back((colIdx < inCells.size()) ? inCells[colIdx] : EMPTY);
             }
         }
     }
