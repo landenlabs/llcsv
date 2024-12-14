@@ -5,7 +5,7 @@ set app=llcsv
 
 # rm -rf DerivedData/
 # xcodebuild -configuration Release -alltargets clean
-xcodebuild -scheme $app -configuration Release build
+xcodebuild -scheme $app -configuration Release clean build
 
 # echo -----------------------
 # find ./DerivedData -type f -name $app -perm +111 -ls
