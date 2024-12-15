@@ -32,9 +32,24 @@
 
 #pragma once
 
+#if defined(_WIN32) || defined(_WIN64)
+    #define HAVE_WIN
+    #define NOMINMAX
+    #define _CRT_SECURE_NO_WARNINGS   // define before all includes
+
+    #define strcasecmp _strcmpi
+    #define strncasecmp _strnicmp
+
+    // TODO - implement case insenstive strstr
+    #define strcasestr strstr
+#else
+    typedef unsigned int DWORD;
+#endif
+
 #include "lstring.h"
-// #include <iosfwd>
 
 using namespace std;
+
 typedef unsigned short  UShort;
+typedef unsigned int  UInt;
 

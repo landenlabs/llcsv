@@ -32,7 +32,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+#include "ll_stdhdr.h"
 #include "csvcmds.h"
 #include "csvmodify.h"
 #include "csvselect.h"
@@ -42,6 +42,11 @@
 using namespace CsvTool;
 
 #include <iostream>
+
+#ifdef IN
+#undef IN
+#undef OUT
+#endif
 
 
 // static bool DUMP_TABLE = false;

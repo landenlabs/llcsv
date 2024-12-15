@@ -42,7 +42,7 @@
 #include <vector>
 
 // Fowward
-class CsvRowData;
+struct CsvRowData;
 
  
 class FindFilter {

@@ -38,6 +38,11 @@
 #include "csvfiles.h"
 #include "csvinputs.h"
 
+#ifdef IN
+#undef IN
+#undef OUT
+#endif
+
 class CsvOutput : public CsvFiles {
    
 protected:

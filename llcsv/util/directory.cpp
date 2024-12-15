@@ -32,17 +32,8 @@
 
 #include "directory.h"
 
-#include <iostream>
 
 #ifdef HAVE_WIN
-#include <windows.h>
-#endif
-
-#include <stdio.h>
-#include <errno.h>
-#include "ll_stdhdr.h"
-
-#ifdef WIN32
 
 const lstring ANY("\\*");
 lstring Directory_files::SLASH = "\\";

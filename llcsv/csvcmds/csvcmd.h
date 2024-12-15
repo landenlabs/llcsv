@@ -39,6 +39,11 @@
 #include <iostream>
 #include <regex>
 
+#ifdef IN
+#undef IN
+#undef OUT
+#endif
+
 // Forward
 class CsvCmds;
 typedef unsigned int Order_t;

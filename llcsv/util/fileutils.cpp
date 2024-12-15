@@ -35,7 +35,7 @@
 #include "fileutils.h"
 
 
-#ifdef WIN32
+#ifdef HAVE_WIN
 const char SLASH_CHAR('\\');
 #else
 const char SLASH_CHAR('/');
