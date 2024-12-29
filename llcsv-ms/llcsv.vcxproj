@@ -87,6 +87,10 @@
     <ClInclude Include="..\llcsv\util\strutils.h" />
     <ClInclude Include="..\llcsv\util\swapstream.h" />
     <ClInclude Include="..\llcsv\util\utils.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="llcsv.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
