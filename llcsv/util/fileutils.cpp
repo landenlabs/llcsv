@@ -34,9 +34,6 @@
 
 #include "fileutils.h"
 
-#include <direct.h> // _getcwd
-#define getcwd _getcwd
-
 
 #ifdef HAVE_WIN
 const char SLASH_CHAR('\\');
@@ -46,6 +43,9 @@ const char SLASH_CHAR('\\');
 #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
+
+#include <direct.h> // _getcwd
+#define getcwd _getcwd
 
 #else
 const char SLASH_CHAR('/');
