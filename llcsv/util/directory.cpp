@@ -232,7 +232,7 @@ lstring& Directory_files::fullName(lstring& fname) const
 {
     return join(fname, my_baseDir, my_pDirEnt->d_name);
 }
-
+#endif
 
 //-------------------------------------------------------------------------------------------------
 
@@ -245,6 +245,7 @@ lstring& Directory_files::join(lstring& outFull, const char* dir, const char* na
     return outFull;
     // return GetFullPath(fname);
 }
+
 
 //-------------------------------------------------------------------------------------------------
 lstring getPartDir(const char* filepath) {
@@ -293,7 +294,6 @@ lstring  Directory_files::parts(const char* filepath, bool dir, bool name, bool 
     return result;
 }
 
-#endif
 
 
 

@@ -82,7 +82,7 @@
 #include <typeinfo>
 using namespace std;
 
-uint optionErrCnt = 0;
+unsigned int optionErrCnt = 0;
 
 
 
@@ -150,7 +150,7 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 
 // ---------------------------------------------------------------------------
 void help() {
-    cerr << "  Dennis Lang v1.2 (LandenLabs.com) " __DATE__ << "\n"
+    cerr << "llcsv  Dennis Lang v1.2 (LandenLabs.com) " __DATE__ << "\n"
          << "\nDes: CSV manipulator command line tool\n"
          "Use: llcsv [actions] ...\n"
          "  General pipeline   input selection modify output"

@@ -40,6 +40,12 @@
 
 #include <fstream>
 
+#ifdef HAVE_WIN 
+#ifdef IN
+#undef IN
+#undef OUT
+#endif
+#endif
 
 bool CsvOutputFile::init(CsvCmds& csvCmds, CsvError& csvError) {
     CsvOutput::init(csvCmds, csvError);
