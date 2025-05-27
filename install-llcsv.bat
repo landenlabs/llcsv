@@ -17,6 +17,7 @@ set msbuild=F:\opt\VisualStudio\2022\Preview\MSBuild\Current\Bin\MSBuild.exe
 cd %prog%-ms
 @echo Clean %proj% 
 rmdir /s x64 2> nul
+rmdir /s %prog%\x64
 
 @echo.
 @echo Build release target
