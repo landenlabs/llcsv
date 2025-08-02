@@ -9,7 +9,11 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>--sum --progress *</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> generate='[count]:3d(1,1000,2),[name]:10s(hello),[price]:5.2f(-123.45,123.45)' outputTab</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommandArguments> generate='[count]:3d(1,1000,2),[name]:10s(hello),[price]:5.2f(-123.45,123.45)' outputTab</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

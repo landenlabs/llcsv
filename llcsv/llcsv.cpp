@@ -178,6 +178,7 @@ void help() {
          "     help action"
          "\n"
          "Examples\n"
+         "   "
          "\n";
 }
 
