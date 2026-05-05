@@ -34,6 +34,7 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
+#define VERSION "v6.05.01"
 
 #include <stdio.h>
 #include <ctype.h>
@@ -150,7 +151,7 @@ bool ValidOption(const char* validCmd, const char* possibleCmd, bool reportErr =
 
 // ---------------------------------------------------------------------------
 void help() {
-    cerr << "llcsv  Dennis Lang v1.2 (LandenLabs.com) " __DATE__ << "\n"
+    cerr << "llcsv  Dennis Lang " VERSION " (LandenLabs.com) " __DATE__ << "\n"
          << "\nDes: CSV manipulator command line tool\n"
          "Use: llcsv [actions] ...\n"
          "  General pipeline   input selection modify output"
