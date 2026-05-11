@@ -4,7 +4,11 @@
 // Created by Dennis Lang on 3-Jan-2020
 //
 // ---
+<<<<<<< Updated upstream
 // Copyright (c) 2026 Dennis Lang (landenlabs@gmail.com)
+=======
+// Copyright (C) 2026 Dennis Lang (landenlabs@gmail.com)
+>>>>>>> Stashed changes
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
