@@ -1,7 +1,7 @@
 ﻿<table border="0">
   <tr>
     <td>
-      <!-- VERSION -->v6.05.24<br>
+      <!-- VERSION -->v6.05.25<br>
       <!-- DATE -->24-May-2026<br>
       macOS<br>
       <a href="https://landenlabs.com">Home</a>
@@ -32,7 +32,7 @@ This program is still under development and not ready for users.
 **Help screen**
 
 <pre>
-  Dennis Lang  <!-- VERSION -->v6.05.24<!-- DATE -->24-May-2026
+  Dennis Lang  <!-- VERSION -->v6.05.25<!-- DATE -->24-May-2026
 
 Des: CSV manipulator command line tool
 Use: llcsv [actions] ...

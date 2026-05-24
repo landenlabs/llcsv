@@ -34,7 +34,7 @@
 
 // 4291 - No matching operator delete found
 #pragma warning( disable : 4291 )
-#define VERSION "v6.05.05"
+#define VERSION "v6.05.25"
 
 #include <stdio.h>
 #include <ctype.h>
