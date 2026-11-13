@@ -21,3 +21,11 @@ lib/
 *.lib
 *.aps
 *.user  # project.vcxproj.user
+
+# CMake build cache
+CMakeFiles/
+CMakeCache.txt
+*.bin
+a.out
+# Compiled objects
+*.o

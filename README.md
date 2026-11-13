@@ -17,6 +17,11 @@
 # llcsv
 ### CSV command line tool
 
+[![Build status](https://github.com/landenlabs/llcsv/actions/workflows/build.yml/badge.svg)](https://github.com/landenlabs/llcsv/actions/workflows/build.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+![Language](https://img.shields.io/badge/language-C%2B%2B17-blue.svg)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg)
+
 ### Description
 
 This program is still under development and not ready for users. 
@@ -32,7 +37,7 @@ This program is still under development and not ready for users.
 **Help screen**
 
 <pre>
-  Dennis Lang  <!-- VERSION -->v6.05.25<!-- DATE -->24-May-2026
+llcsv  Dennis Lang <!-- VERSION -->v6.05.25 (LandenLabs.com) <!-- DATE -->24-May-2026
 
 Des: CSV manipulator command line tool
 Use: llcsv [actions] ...
